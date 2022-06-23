@@ -6,16 +6,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/EduardoZepeda/go-coffee-api/api/types"
 	"github.com/EduardoZepeda/go-coffee-api/web"
 )
 
 type Shop struct {
-	ID           int       `db:"id" json:"id,omitempty"`
-	Name         string    `db:"name" json:"name,omitempty"`
-	Address      string    `db:"address" json:"address,omitempty"`
-	Rating       float32   `db:"rating" json:"rating,omitempty"`
-	CreatedDate  time.Time `db:"created_date" json:"created_date"`
-	ModifiedDate time.Time `db:"modified_date" json:"modified_date"`
+	ID           int         `db:"id" json:"id,omitempty"`
+	Name         string      `db:"name" json:"name,omitempty"`
+	Address      string      `db:"address" json:"address,omitempty"`
+	Location     types.Point `sql:"type:geometry"`
+	Rating       float32     `db:"rating" json:"rating,omitempty"`
+	CreatedDate  time.Time   `db:"created_date" json:"created_date"`
+	ModifiedDate time.Time   `db:"modified_date" json:"modified_date"`
 }
 
 func GetCafes(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +43,7 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	query := fmt.Sprintf("SELECT id, name, address, rating, created_date, modified_date FROM shops_shop ORDER BY name DESC LIMIT %d OFFSET %d;", size, page*size)
+	query := fmt.Sprintf("SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY name DESC LIMIT %d OFFSET %d;", size, page*size)
 
 	db, _ := web.ConnectToDB()
 	var cafes []Shop
