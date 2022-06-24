@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/EduardoZepeda/go-coffee-api/api/types"
+	"github.com/EduardoZepeda/go-coffee-api/types"
 	"github.com/EduardoZepeda/go-coffee-api/web"
 	"github.com/gorilla/mux"
 )
