@@ -19,3 +19,8 @@ type SignUpResponse struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+type UserCoordinates struct {
+	Latitude  float32 `json:"latitude"`
+	Longitude float32 `json:"longitude"`
+}

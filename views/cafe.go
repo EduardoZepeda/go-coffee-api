@@ -2,6 +2,7 @@ package views
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -141,6 +142,29 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 		// if query returns nothing return 404 and []
 		web.Respond(w, []int{}, http.StatusNotFound)
 		return
+	}
+	web.Respond(w, cafes, http.StatusOK)
+}
+
+func GetNearestCafe(w http.ResponseWriter, r *http.Request) {
+	var userCoordinates = models.UserCoordinates{}
+	if err := json.NewDecoder(r.Body).Decode(&userCoordinates); err != nil {
+		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must a longitude and a latitude. Example: "}, http.StatusBadRequest)
+		return
+	}
+	db, _ := web.ConnectToDB()
+	query := "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY location <-> ST_SetSRID(ST_MakePoint($1, $2), 4326) LIMIT 10;"
+	var cafes []models.Shop
+	if err := db.SelectContext(r.Context(), &cafes, query, userCoordinates.Latitude, userCoordinates.Longitude); err != nil {
+		fmt.Println(err)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		return
+	}
+	if len(cafes) == 0 {
+		// if query returns nothing return 404 and []
+		web.Respond(w, []int{}, http.StatusNotFound)
+		return
+
 	}
 	web.Respond(w, cafes, http.StatusOK)
 }
