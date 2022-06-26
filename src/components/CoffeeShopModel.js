@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import ModelDescription from './ModelDescription'
+import Headings from './Headings';
 
 export default function CoffeeShopModel() {
 
@@ -19,14 +19,9 @@ export default function CoffeeShopModel() {
 
     return (
         <>
-            <Typography variant="h3" component="h1" align="center" paragraph>
-                Coffee API Gdl V1
-            </Typography>
-            <Typography variant="h4" component="h2" align="center" paragraph>
-                Coffee shop model
-            </Typography>
+            <Headings subtitle={"Coffee shop model"} />
             <Stack spacing={2}>
-                {coffeeShopModel.map((field) => <ModelDescription field={field} />)}
+                {coffeeShopModel.map((field) => <ModelDescription key={field.field} field={field} />)}
             </Stack>
         </>
     )

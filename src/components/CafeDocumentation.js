@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Endpoint from './Endpoint'
+import Headings from './Headings';
 
 export default function CafeDocumentation() {
 
@@ -42,14 +42,9 @@ export default function CafeDocumentation() {
 
     return (
         <>
-            <Typography variant="h3" component="h1" align="center" paragraph>
-                Coffee API Gdl V1
-            </Typography>
-            <Typography variant="h4" component="h2" align="center" paragraph>
-                Cafes documentation
-            </Typography>
+            <Headings subtitle={"Coffee shop documentation"} />
             <Stack spacing={2}>
-                {coffeeAPIRoutes.map((route) => <Endpoint {...route} />)}
+                {coffeeAPIRoutes.map((route) => <Endpoint key={`${route.method}-${route.uri}`} {...route} />)}
             </Stack>
         </>
     )

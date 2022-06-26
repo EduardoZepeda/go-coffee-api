@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Prism from "prismjs";
 import "../prismjs.css";
 import "../okaidaPrismjs.css"
+import "../prismjsCustomized.css"
 
 export default function Code({ code, language }) {
     useEffect(() => {

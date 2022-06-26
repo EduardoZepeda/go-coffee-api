@@ -16,9 +16,9 @@ export default function Endpoint({ field }) {
         <Item elevation={1} variant="overline" display="block">
             {keys.map((key) => {
                 if (key === 'field') {
-                    return <Typography variant="h5" component="h3">{field[key]}</Typography>
+                    return <Typography key={key} variant="h5" component="h3">{field[key]}</Typography>
                 }
-                return <Typography>{field[key] ? key + ": " + field[key] : null}</Typography>
+                return <Typography key={key}>{field[key] ? key + ": " + field[key] : null}</Typography>
             })}
         </Item>
     );

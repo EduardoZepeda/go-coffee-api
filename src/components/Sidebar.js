@@ -35,6 +35,8 @@ export default function Sidebar({ open, handleDrawerClose, drawerWidth }) {
                 width: drawerWidth,
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
+                    backgroundColor: 'text.primary',
+                    color: '#FFF',
                     width: drawerWidth,
                     boxSizing: 'border-box',
                 },
@@ -44,21 +46,21 @@ export default function Sidebar({ open, handleDrawerClose, drawerWidth }) {
             open={open}
         >
             <DrawerHeader>
-                <IconButton onClick={handleDrawerClose}>
+                <IconButton sx={{ color: 'primary.main' }} onClick={handleDrawerClose}>
                     {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                 </IconButton>
             </DrawerHeader>
             <Divider />
             <List>
                 {upperMenu.map(({ text, link }) => (
-                    <NavLink style={({ isActive }) =>
+                    <NavLink key={link} style={({ isActive }) =>
                         isActive
                             ? {
                                 color: '#29b6f6',
                                 textDecoration: 'none'
                             }
                             : { color: 'inherit', textDecoration: 'none' }
-                    } exact={true} to={link}>
+                    } exact={'true'} to={link}>
                         <ListItem key={text} disablePadding>
                             <ListItemButton>
                                 <ListItemText primary={text} />
@@ -67,17 +69,17 @@ export default function Sidebar({ open, handleDrawerClose, drawerWidth }) {
                     </NavLink>
                 ))}
             </List>
-            <Divider />
+            <Divider sx={{ bgcolor: 'primary.dark' }} />
             <List>
                 {lowerMenu.map(({ text, link }) => (
-                    <NavLink style={({ isActive }) =>
+                    <NavLink key={link} style={({ isActive }) =>
                         isActive
                             ? {
                                 color: '#29b6f6',
-                                textDecoration: 'none'
+                                textDecoration: 'none',
                             }
                             : { color: 'inherit', textDecoration: 'none' }
-                    } exact={true} to={link}>
+                    } exact={'true'} to={link}>
                         <ListItem key={text} disablePadding>
                             <ListItemButton>
                                 <ListItemText primary={text} />
@@ -86,7 +88,7 @@ export default function Sidebar({ open, handleDrawerClose, drawerWidth }) {
                     </NavLink>
                 ))}
             </List>
-            <Divider />
+            <Divider sx={{ bgcolor: "primary.dark" }} />
         </Drawer>
     )
 }

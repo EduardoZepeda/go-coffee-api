@@ -3,7 +3,6 @@ import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
-import { Grid } from '@mui/material';
 import Code from './Code';
 export default function Endpoint({ method, uri, summary, description, payload, permissions }) {
 
@@ -13,8 +12,8 @@ export default function Endpoint({ method, uri, summary, description, payload, p
     }));
 
     return (
-        <Item elevation={1} variant="overline" display="block">
-            <Typography sx={{ my: 1 }} variant="h4">
+        <Item key={`${method}-${uri}`} elevation={1} variant="overline" display="block">
+            <Typography sx={{ my: 1 }} variant="h5">
                 {summary}
             </Typography>
             <Alert sx={{ my: 1 }} severity="info" icon={false}>
@@ -22,11 +21,12 @@ export default function Endpoint({ method, uri, summary, description, payload, p
             </Alert>
             <Typography sx={{ my: 1 }} paragraph>{description}</Typography>
             {payload
-                ? (<Grid container direction="row" alignItems="center">Example:
+                ? (<>
+                    <Typography>Example:</Typography>
                     <Code code={payload} language={'javascript'} />
-                </Grid>)
+                </>)
                 : null}
-            <Typography sx={{ my: 1 }}>{permissions ? <Alert severity="warning">{`Only ${permissions} members allowed`}</Alert> : null}</Typography>
+            {permissions ? <Alert sx={{ my: 1 }} severity="warning">{`Only ${permissions} members allowed`}</Alert> : null}
         </Item>
     );
 }

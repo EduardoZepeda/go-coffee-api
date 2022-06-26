@@ -67,7 +67,7 @@ export default function App() {
         <DrawerHeader />
         <DocBreadcrumbs />
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Box sx={{ maxWidth: 400, textAlign: 'justify', fontSize: '1.4rem' }}>
+          <Box sx={{ maxWidth: '100%' }}>
             <Routes>
               <Route path="/coffee-shop-documentation" element={<CafeDocumentation />} />
               <Route path="/users-documentation" element={<UsersDocumentation />} />

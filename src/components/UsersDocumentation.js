@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Endpoint from './Endpoint'
+import Headings from './Headings';
 
 export default function UsersDocumentation() {
 
@@ -24,14 +24,9 @@ export default function UsersDocumentation() {
 
     return (
         <>
-            <Typography variant="h3" component="h1" align="center" paragraph>
-                Coffee API Gdl V1
-            </Typography>
-            <Typography variant="h4" component="h2" align="center" paragraph>
-                Users documentation
-            </Typography>
+            <Headings subtitle={"Users documentation"} />
             <Stack spacing={2}>
-                {usersAPIRoutes.map((route) => <Endpoint {...route} />)}
+                {usersAPIRoutes.map((route) => <Endpoint key={`${route.method}-${route.uri}`} {...route} />)}
             </Stack>
         </>
     )

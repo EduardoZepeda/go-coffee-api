@@ -1,0 +1,6 @@
+.Code {
+    overflow-x: scroll;
+    /* display prevents code to overflow its parents */
+    max-width: 100%;
+    display: inline-grid;
+}
