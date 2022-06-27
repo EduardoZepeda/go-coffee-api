@@ -8,6 +8,7 @@ export default function Endpoint({ field }) {
     const Item = styled(Paper)(({ theme }) => ({
         ...theme.typography.body2,
         color: theme.palette.text.secondary,
+        padding: '1rem',
     }));
 
     const keys = Object.keys(field)

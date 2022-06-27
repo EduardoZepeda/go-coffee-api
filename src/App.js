@@ -7,7 +7,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import CafeDocumentation from './components/CafeDocumentation';
+import CoffeeShopDocumentation from './components/CoffeeShopDocumentation';
 import DocBreadcrumbs from './components/DocBreadcrumbs';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -69,7 +69,7 @@ export default function App() {
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <Box sx={{ maxWidth: '100%' }}>
             <Routes>
-              <Route path="/coffee-shop-documentation" element={<CafeDocumentation />} />
+              <Route path="/coffee-shop-documentation" element={<CoffeeShopDocumentation />} />
               <Route path="/users-documentation" element={<UsersDocumentation />} />
               <Route path="/coffee-shop-model" element={<CoffeeShopModel />} />
               <Route path="/user-model" element={<UserModel />} />

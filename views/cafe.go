@@ -149,7 +149,7 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 func GetNearestCafe(w http.ResponseWriter, r *http.Request) {
 	var userCoordinates = models.UserCoordinates{}
 	if err := json.NewDecoder(r.Body).Decode(&userCoordinates); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must a longitude and a latitude. Example: "}, http.StatusBadRequest)
+		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
 		return
 	}
 	db, _ := web.ConnectToDB()

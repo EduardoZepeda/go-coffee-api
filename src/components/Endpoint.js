@@ -9,6 +9,7 @@ export default function Endpoint({ method, uri, summary, description, payload, p
     const Item = styled(Paper)(({ theme }) => ({
         ...theme.typography.body2,
         color: theme.palette.text.secondary,
+        padding: '1rem',
     }));
 
     return (
@@ -22,7 +23,7 @@ export default function Endpoint({ method, uri, summary, description, payload, p
             <Typography sx={{ my: 1 }} paragraph>{description}</Typography>
             {payload
                 ? (<>
-                    <Typography>Example:</Typography>
+                    <Typography>Payload example:</Typography>
                     <Code code={payload} language={'javascript'} />
                 </>)
                 : null}

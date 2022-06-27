@@ -4,9 +4,23 @@ import Stack from '@mui/material/Stack';
 import Endpoint from './Endpoint'
 import Headings from './Headings';
 
-export default function CafeDocumentation() {
+export default function CoffeeShopDocumentation() {
 
     const coffeeAPIRoutes = [
+        {
+            "method": "POST", "uri": "/api/v1/cafes/nearest",
+            "summary": "Get a list of the ten nearest coffee shops",
+            "description": "Get a list of the user ten nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers",
+            "payload": `{"latitude": -103.3668161, "longitude": 20.6708447}`,
+            "permissions": null
+        },
+        {
+            "method": "GET", "uri": "/api/v1/cafes/search/{searchTerm}",
+            "summary": "Search coffee shops by name or address",
+            "description": "Get a list of all coffee shops whose address or name match the search term.",
+            "payload": null,
+            "permissions": null
+        },
         {
             "method": "GET", "uri": "/api/v1/cafes",
             "summary": "Get a list of coffee shops",
