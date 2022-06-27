@@ -18,7 +18,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/cafes/{id}", views.UpdateCafe).Methods(http.MethodPut)
 	api.HandleFunc("/cafes/{id}", views.DeleteCafe).Methods(http.MethodDelete)
 	api.HandleFunc("/cafes/nearest", views.GetNearestCafe).Methods(http.MethodPost)
-	api.HandleFunc("/search/{searchTerm}", views.SearchCafe).Methods(http.MethodGet)
+	api.HandleFunc("/cafes/search/{searchTerm}", views.SearchCafe).Methods(http.MethodGet)
 	api.HandleFunc("/login", views.LoginUser).Methods(http.MethodPost)
 	api.HandleFunc("/signup", views.SignupUser).Methods(http.MethodPost)
 	api.ServeHTTP(w, r)
