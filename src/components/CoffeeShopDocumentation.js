@@ -17,14 +17,14 @@ export default function CoffeeShopDocumentation() {
         {
             "method": "GET", "uri": "/api/v1/cafes/search/{searchTerm}",
             "summary": "Search coffee shops by name or address",
-            "description": "Get a list of all coffee shops whose address or name match the search term.",
+            "description": "Get a list of all coffee shops whose address or name match the search term. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
             "payload": null,
             "permissions": null
         },
         {
             "method": "GET", "uri": "/api/v1/cafes",
             "summary": "Get a list of coffee shops",
-            "description": "Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned.",
+            "description": "Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
             "payload": null,
             "permissions": null
         },
