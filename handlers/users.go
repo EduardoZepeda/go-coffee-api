@@ -1,12 +1,14 @@
-package views
+package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
+	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/EduardoZepeda/go-coffee-api/types"
 	"github.com/EduardoZepeda/go-coffee-api/utils"
 	"github.com/EduardoZepeda/go-coffee-api/web"
@@ -19,10 +21,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include an email and a password."}, http.StatusBadRequest)
 		return
 	}
-	var user models.User
-	db, _ := web.ConnectToDB()
-	query := "SELECT id, email, password FROM auth_user WHERE email = $1;"
-	if err := db.Get(&user, query, loginRequest.Email); err != nil {
+	user, err := repository.GetUser(r.Context(), loginRequest.Email)
+	if err == sql.ErrNoRows {
 		web.Respond(w, types.ApiError{Message: "Invalid credentials"}, http.StatusUnauthorized)
 		return
 	}

@@ -16,7 +16,7 @@ export default function CafeModel() {
 
     return (
         <>
-            <Headings subtitle={"Coffee shop Model"} />
+            <Headings subtitle={"User model"} />
             <Stack spacing={2}>
                 {userModel.map((field) => <ModelDescription key={field.field} field={field} />)}
             </Stack>

@@ -1,12 +1,13 @@
-package views
+package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
+	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/EduardoZepeda/go-coffee-api/types"
 
 	"github.com/EduardoZepeda/go-coffee-api/web"
@@ -36,10 +37,8 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	query := "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY name DESC LIMIT $1 OFFSET $2;"
-	db, _ := web.ConnectToDB()
-	var cafes []models.Shop
-	if err := db.SelectContext(r.Context(), &cafes, query, size, page*size); err != nil {
+	cafes, err := repository.GetCafes(r.Context(), page, size)
+	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
@@ -47,34 +46,34 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 		// if query returns nothing return 404 and []
 		web.Respond(w, []int{}, http.StatusNotFound)
 		return
-
 	}
 	web.Respond(w, cafes, http.StatusOK)
 }
 
 func GetCafeById(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	db, _ := web.ConnectToDB()
-	var cafes models.Shop
-	query := "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop WHERE id = $1;"
-	if err := db.Get(&cafes, query, params["id"]); err != nil {
-		// If not found {} and 404
+	cafe, err := repository.GetCafeById(r.Context(), params["id"])
+	switch err {
+	case nil:
+		web.Respond(w, cafe, http.StatusOK)
+	case sql.ErrNoRows:
 		web.Respond(w, struct{}{}, http.StatusNotFound)
 		return
+	default:
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		return
 	}
-	web.Respond(w, cafes, http.StatusOK)
 }
 
 func CreateCafe(w http.ResponseWriter, r *http.Request) {
-	var shopRequest = models.UpsertShop{}
+	var shopRequest = models.CreateShop{}
 	if err := json.NewDecoder(r.Body).Decode(&shopRequest); err != nil {
 		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include name, location, address and rating."}, http.StatusBadRequest)
 		return
 	}
-	db, _ := web.ConnectToDB()
-	query := "INSERT INTO shops_shop (name, location, address, rating) VALUES ($1, $2, $3, $4);"
-	if err := db.MustExec(query, shopRequest.Name, shopRequest.Location, shopRequest.Address, shopRequest.Rating); err != nil {
-		web.Respond(w, struct{}{}, http.StatusInternalServerError)
+	err := repository.CreateCafe(r.Context(), &shopRequest)
+	if err != nil {
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, shopRequest, http.StatusCreated)
@@ -82,15 +81,15 @@ func CreateCafe(w http.ResponseWriter, r *http.Request) {
 
 func UpdateCafe(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var shopRequest = models.UpsertShop{}
+	var shopRequest = models.InsertShop{}
+	shopRequest.ID = params["id"]
 	if err := json.NewDecoder(r.Body).Decode(&shopRequest); err != nil {
 		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include name, location, address and rating."}, http.StatusBadRequest)
 		return
 	}
-	db, _ := web.ConnectToDB()
-	query := "UPDATE shops_shop SET name = $2, location = $3, address = $4, rating = $5 WHERE id = $1;"
-	if err := db.MustExec(query, params["id"], shopRequest.Name, shopRequest.Location, shopRequest.Address, shopRequest.Rating); err != nil {
-		web.Respond(w, struct{}{}, http.StatusBadRequest)
+	err := repository.UpdateCafe(r.Context(), &shopRequest)
+	if err != nil {
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, &shopRequest, http.StatusOK)
@@ -98,9 +97,8 @@ func UpdateCafe(w http.ResponseWriter, r *http.Request) {
 
 func DeleteCafe(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	db, _ := web.ConnectToDB()
-	query := "DELETE FROM shops_shop WHERE id = $1;"
-	if err := db.MustExec(query, params["id"]); err != nil {
+	err := repository.DeleteCafe(r.Context(), params["id"])
+	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
@@ -131,10 +129,8 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	db, _ := web.ConnectToDB()
-	var cafes []models.Shop
-	query := "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop WHERE to_tsvector(COALESCE(name, '') || COALESCE(address, '')) @@ plainto_tsquery($1) LIMIT $2 OFFSET $3;"
-	if err := db.SelectContext(r.Context(), &cafes, query, params["searchTerm"], size, page*size); err != nil {
+	cafes, err := repository.SearchCafe(r.Context(), params["searchTerm"], page, size)
+	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
@@ -146,17 +142,14 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 	web.Respond(w, cafes, http.StatusOK)
 }
 
-func GetNearestCafe(w http.ResponseWriter, r *http.Request) {
+func GetNearestCafes(w http.ResponseWriter, r *http.Request) {
 	var userCoordinates = models.UserCoordinates{}
 	if err := json.NewDecoder(r.Body).Decode(&userCoordinates); err != nil {
 		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
 		return
 	}
-	db, _ := web.ConnectToDB()
-	query := "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY location <-> ST_SetSRID(ST_MakePoint($1, $2), 4326) LIMIT 10;"
-	var cafes []models.Shop
-	if err := db.SelectContext(r.Context(), &cafes, query, userCoordinates.Latitude, userCoordinates.Longitude); err != nil {
-		fmt.Println(err)
+	cafes, err := repository.GetNearestCafes(r.Context(), &userCoordinates)
+	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
@@ -164,7 +157,6 @@ func GetNearestCafe(w http.ResponseWriter, r *http.Request) {
 		// if query returns nothing return 404 and []
 		web.Respond(w, []int{}, http.StatusNotFound)
 		return
-
 	}
 	web.Respond(w, cafes, http.StatusOK)
 }

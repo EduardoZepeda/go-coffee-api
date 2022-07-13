@@ -16,7 +16,15 @@ type Shop struct {
 	ModifiedDate time.Time   `db:"modified_date" json:"modified_date,omitempty"`
 }
 
-type UpsertShop struct {
+type CreateShop struct {
+	Name     string      `db:"name" json:"name,omitempty"`
+	Address  string      `db:"address" json:"address,omitempty"`
+	Location types.Point `sql:"type:geometry"`
+	Rating   float32     `db:"rating" json:"rating,omitempty"`
+}
+
+type InsertShop struct {
+	ID       string      `db:"id" json:"id,omitempty"`
 	Name     string      `db:"name" json:"name,omitempty"`
 	Address  string      `db:"address" json:"address,omitempty"`
 	Location types.Point `sql:"type:geometry"`

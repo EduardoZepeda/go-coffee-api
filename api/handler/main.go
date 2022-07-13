@@ -1,25 +1,37 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
+	"github.com/EduardoZepeda/go-coffee-api/database"
+	"github.com/EduardoZepeda/go-coffee-api/handlers"
 	"github.com/EduardoZepeda/go-coffee-api/middleware"
-	"github.com/EduardoZepeda/go-coffee-api/views"
+	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/gorilla/mux"
 )
+
+func init() {
+	repo, err := database.NewPostgresRepository()
+	if err != nil {
+		log.Fatal(err)
+	}
+	repository.SetRepository(repo)
+}
 
 func Api(w http.ResponseWriter, r *http.Request) {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.Use(middleware.AuthenticatedOrReadOnly)
-	api.HandleFunc("/cafes", views.GetCafes).Methods(http.MethodGet)
-	api.HandleFunc("/cafes", views.CreateCafe).Methods(http.MethodPost)
-	api.HandleFunc("/cafes/{id}", views.GetCafeById).Methods(http.MethodGet)
-	api.HandleFunc("/cafes/{id}", views.UpdateCafe).Methods(http.MethodPut)
-	api.HandleFunc("/cafes/{id}", views.DeleteCafe).Methods(http.MethodDelete)
-	api.HandleFunc("/cafes/nearest", views.GetNearestCafe).Methods(http.MethodPost)
-	api.HandleFunc("/cafes/search/{searchTerm}", views.SearchCafe).Methods(http.MethodGet)
-	api.HandleFunc("/login", views.LoginUser).Methods(http.MethodPost)
-	api.HandleFunc("/signup", views.SignupUser).Methods(http.MethodPost)
+	api.HandleFunc("/cafes", handlers.GetCafes).Methods(http.MethodGet)
+	api.HandleFunc("/cafes", handlers.CreateCafe).Methods(http.MethodPost)
+	api.HandleFunc("/cafes/{id}", handlers.GetCafeById).Methods(http.MethodGet)
+	api.HandleFunc("/cafes/{id}", handlers.UpdateCafe).Methods(http.MethodPut)
+	api.HandleFunc("/cafes/{id}", handlers.DeleteCafe).Methods(http.MethodDelete)
+	api.HandleFunc("/cafes/nearest", handlers.GetNearestCafes).Methods(http.MethodPost)
+	api.HandleFunc("/cafes/search/{searchTerm}", handlers.SearchCafe).Methods(http.MethodGet)
+	api.HandleFunc("/login", handlers.LoginUser).Methods(http.MethodPost)
+	api.HandleFunc("/signup", handlers.SignupUser).Methods(http.MethodPost)
 	api.ServeHTTP(w, r)
+	defer repository.Close()
 }
