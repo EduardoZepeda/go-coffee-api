@@ -63,13 +63,13 @@ func (repo *PostgresRepository) DeleteCafe(ctx context.Context, id string) error
 
 func (repo *PostgresRepository) SearchCafe(ctx context.Context, query string, page uint64, size uint64) ([]*models.Shop, error) {
 	var cafes []*models.Shop
-	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop WHERE to_tsvector(COALESCE(name, '') || COALESCE(address, '')) @@ plainto_tsquery($1) LIMIT $2 OFFSET $3;", query, size, page*size)
+	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop WHERE to_tsvector(COALESCE(LOWER(name), '') || COALESCE(LOWER(address), '')) @@ plainto_tsquery($1) LIMIT $2 OFFSET $3;", query, size, page*size)
 	return cafes, err
 }
 
 func (repo *PostgresRepository) GetNearestCafes(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.Shop, error) {
 	var cafes []*models.Shop
-	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY location <-> ST_SetSRID(ST_MakePoint(:Latitude, :Longitude), 4326) LIMIT 10;", UserCoordinates)
+	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY location <-> ST_SetSRID(ST_MakePoint($1, $2), 4326) LIMIT 10;", UserCoordinates.Latitude, UserCoordinates.Longitude)
 	return cafes, err
 }
 
