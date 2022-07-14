@@ -39,7 +39,7 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 	}
 	cafes, err := repository.GetCafes(r.Context(), page, size)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	if len(cafes) == 0 {
@@ -60,7 +60,7 @@ func GetCafeById(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, struct{}{}, http.StatusNotFound)
 		return
 	default:
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 }
@@ -73,7 +73,7 @@ func CreateCafe(w http.ResponseWriter, r *http.Request) {
 	}
 	err := repository.CreateCafe(r.Context(), &shopRequest)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, shopRequest, http.StatusCreated)
@@ -89,7 +89,7 @@ func UpdateCafe(w http.ResponseWriter, r *http.Request) {
 	}
 	err := repository.UpdateCafe(r.Context(), &shopRequest)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, &shopRequest, http.StatusOK)
@@ -99,7 +99,7 @@ func DeleteCafe(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	err := repository.DeleteCafe(r.Context(), params["id"])
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, struct{}{}, http.StatusNoContent)
@@ -131,7 +131,7 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 	}
 	cafes, err := repository.SearchCafe(r.Context(), params["searchTerm"], page, size)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	if len(cafes) == 0 {
@@ -150,7 +150,7 @@ func GetNearestCafes(w http.ResponseWriter, r *http.Request) {
 	}
 	cafes, err := repository.GetNearestCafes(r.Context(), &userCoordinates)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
 	if len(cafes) == 0 {
