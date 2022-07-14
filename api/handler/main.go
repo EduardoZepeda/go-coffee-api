@@ -33,5 +33,4 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/login", handlers.LoginUser).Methods(http.MethodPost)
 	api.HandleFunc("/signup", handlers.SignupUser).Methods(http.MethodPost)
 	api.ServeHTTP(w, r)
-	defer repository.Close()
 }
