@@ -18,7 +18,6 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 	q := make(url.Values)
 	q.Set("sslmode", "require")
 	q.Set("timezone", "utc")
-
 	u := url.URL{
 		Scheme:   "postgres",
 		User:     url.UserPassword(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD")),

@@ -54,7 +54,9 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 func SignupUser(w http.ResponseWriter, r *http.Request) {
 	var signupLoginRequest = models.SignUpLoginRequest{}
-	if err := json.NewDecoder(r.Body).Decode(&signupLoginRequest); err != nil {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&signupLoginRequest); err != nil {
 		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include an email and a password."}, http.StatusBadRequest)
 		return
 	}
