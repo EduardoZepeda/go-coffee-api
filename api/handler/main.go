@@ -28,6 +28,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.GetCafeById).Methods(http.MethodGet)
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.UpdateCafe).Methods(http.MethodPut)
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.DeleteCafe).Methods(http.MethodDelete)
+	// We prefer a post request to prevent user's location getting saved as links on databases
 	api.HandleFunc("/cafes/nearest", handlers.GetNearestCafes).Methods(http.MethodPost)
 	api.HandleFunc("/cafes/search/{searchTerm:[a-z]+}", handlers.SearchCafe).Methods(http.MethodGet)
 	api.HandleFunc("/login", handlers.LoginUser).Methods(http.MethodPost)
