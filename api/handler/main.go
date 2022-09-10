@@ -31,7 +31,7 @@ func init() {
 // @contact.email eduardozepeda@coffeebytes.dev
 // @license.name MIT
 // @license.url https://mit-license.org/
-// @host https://go-coffee-api.vercel.app
+// @host go-coffee-api.vercel.app
 // @BasePath /api/v1
 func Api(w http.ResponseWriter, r *http.Request) {
 	router := mux.NewRouter()
