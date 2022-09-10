@@ -4,8 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/EduardoZepeda/go-coffee-api/api/handler/docs"
 	"github.com/EduardoZepeda/go-coffee-api/database"
+	// Remember to place docs outside of api/handler when deploying in vercel
+	// to prevent "Error: Could not find an exported function" error
+	_ "github.com/EduardoZepeda/go-coffee-api/docs"
 	"github.com/EduardoZepeda/go-coffee-api/handlers"
 	"github.com/EduardoZepeda/go-coffee-api/middleware"
 	"github.com/EduardoZepeda/go-coffee-api/repository"
