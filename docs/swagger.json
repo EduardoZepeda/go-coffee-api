@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "https://go-coffee-api.vercel.app",
+    "host": "go-coffee-api.vercel.app",
     "basePath": "/api/v1",
     "paths": {
         "/cafes": {

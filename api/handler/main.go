@@ -36,8 +36,9 @@ func init() {
 func Api(w http.ResponseWriter, r *http.Request) {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
-	api.PathPrefix("/swagger").HandlerFunc(httpSwagger.WrapHandler)
+	api.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	api.Use(middleware.AuthenticatedOrReadOnly)
+	api.HandleFunc("/debug_next", handlers.SwaggerDocs).Methods(http.MethodGet)
 	api.HandleFunc("/cafes", handlers.GetCafes).Methods(http.MethodGet)
 	api.HandleFunc("/cafes", handlers.CreateCafe).Methods(http.MethodPost)
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.GetCafeById).Methods(http.MethodGet)
