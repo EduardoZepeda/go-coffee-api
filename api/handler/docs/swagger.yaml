@@ -1,0 +1,319 @@
+basePath: /api/v1
+definitions:
+  models.CreateShop:
+    properties:
+      address:
+        type: string
+      location:
+        items:
+          type: number
+        type: array
+      name:
+        type: string
+      rating:
+        type: number
+    type: object
+  models.EmptyBody:
+    type: object
+  models.InsertShop:
+    properties:
+      address:
+        type: string
+      id:
+        type: string
+      location:
+        items:
+          type: number
+        type: array
+      name:
+        type: string
+      rating:
+        type: number
+    type: object
+  models.Shop:
+    properties:
+      address:
+        type: string
+      created_date:
+        type: string
+      id:
+        type: integer
+      location:
+        items:
+          type: number
+        type: array
+      modified_date:
+        type: string
+      name:
+        type: string
+      rating:
+        type: number
+    type: object
+  models.UserCoordinates:
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
+  types.ApiError:
+    properties:
+      message:
+        type: string
+    type: object
+host: https://go-coffee-api.vercel.app
+info:
+  contact:
+    email: eduardozepeda@coffeebytes.dev
+    name: Eduardo Zepeda
+  description: This API returns information about speciality coffee shops in Guadalajara,
+    Mexico.
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  termsOfService: http://swagger.io/terms/
+  title: Coffee Shops in Gdl API
+  version: "1.0"
+paths:
+  /cafes:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all coffee shop in Guadalajara. Use page and size
+        GET arguments to regulate the number of objects returned and the page, respectively.
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Size number
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Shop'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get a list of coffee shops
+      tags:
+      - cafes
+    post:
+      consumes:
+      - application/json
+      description: Create a coffee shop object.
+      parameters:
+      - description: New Coffee Shop data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateShop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CreateShop'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Create a new coffee shop
+      tags:
+      - cafe
+  /cafes/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a coffee shop object.
+      parameters:
+      - description: Coffee Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Delete a coffee shop
+      tags:
+      - cafe
+    get:
+      consumes:
+      - application/json
+      description: Get a specific coffee shop object. Id parameter must be an integer.
+      parameters:
+      - description: Coffee Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Shop'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get a new coffee shop by its id
+      tags:
+      - cafe
+    put:
+      consumes:
+      - application/json
+      description: Update a coffee shop object.
+      parameters:
+      - description: Updated Coffee Shop data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.InsertShop'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InsertShop'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Update a coffee shop
+      tags:
+      - cafe
+  /cafes/nearest:
+    post:
+      consumes:
+      - application/json
+      description: Get a list of the user nearest coffee shops in Guadalajara, ordered
+        by distance. It needs user's latitude and longitude as float numbers. Treated
+        as POST to prevent third parties to save users' location into databases.
+      parameters:
+      - description: User coordinates (latitude, longitude) in JSON
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserCoordinates'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Shop'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/models.EmptyBody'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get a list of the nearest coffee shops
+      tags:
+      - cafe
+      - search
+  /cafes/search/{searchTerm}:
+    get:
+      consumes:
+      - application/json
+      description: Search a coffee shop by a given word
+      parameters:
+      - description: Search term
+        in: path
+        name: searchTerm
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Size number
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Shop'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/models.EmptyBody'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Search a coffee shop by a given word
+      tags:
+      - cafe
+      - search
+swagger: "2.0"

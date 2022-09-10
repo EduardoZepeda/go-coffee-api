@@ -6,6 +6,8 @@ import (
 	"github.com/EduardoZepeda/go-coffee-api/types"
 )
 
+type EmptyBody struct{}
+
 type Shop struct {
 	ID           int         `db:"id" json:"id,omitempty"`
 	Name         string      `db:"name" json:"name,omitempty"`

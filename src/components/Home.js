@@ -8,7 +8,6 @@ import { Box } from '@mui/system';
 export default function Home() {
 
 
-
     return (
         <>
             <Headings subtitle={"API description"} />
@@ -18,6 +17,7 @@ export default function Home() {
             <Typography sx={{ color: 'text.secondary', maxWidth: '76ch', fontSize: '1.3rem' }} paragraph>
                 This API returns information about speciality coffee shops in Guadalajara, Mexico. Please refer to documentation in the sidebar panel for further details. It was created as a personal project to practice go web server capabilities.
             </Typography>
+            <Typography sx={{ color: 'text.secondary', maxWidth: '76ch', fontSize: '1.3rem' }}>Swagger documentation endpoint available here: <Link href='/api/v1/swagger/index.html'>/api/v1/swagger/index.html</Link></Typography>
             <Typography sx={{ color: 'text.secondary', maxWidth: '76ch', fontSize: '1.3rem' }}>Try <Link href='/api/v1/cafes'>/api/v1/cafes</Link></Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }} >
                 <img alt="logo img" src={"logo192.png"}></img>
