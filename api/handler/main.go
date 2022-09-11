@@ -9,10 +9,10 @@ import (
 	// to prevent "Error: Could not find an exported function" error
 	_ "github.com/EduardoZepeda/go-coffee-api/docs"
 	"github.com/EduardoZepeda/go-coffee-api/handlers"
+	httpSwagger "github.com/EduardoZepeda/go-coffee-api/http-swagger"
 	"github.com/EduardoZepeda/go-coffee-api/middleware"
 	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/gorilla/mux"
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func init() {
