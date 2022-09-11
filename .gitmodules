@@ -1,0 +1,3 @@
+[submodule "http-swagger"]
+	path = http-swagger
+	url = https://github.com/EduardoZepeda/http-swagger
