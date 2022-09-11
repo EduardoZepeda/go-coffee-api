@@ -14,6 +14,6 @@ type DebugNext struct {
 
 func SwaggerDocs(w http.ResponseWriter, r *http.Request) {
 	re := regexp.MustCompile(`^(.*/)([^?].*)?[?|.]*$`)
-	matches := re.FindStringSubmatch(r.RequestURI)
-	web.Respond(w, DebugNext{Uri: r.RequestURI, Matches: matches}, http.StatusOK)
+	matches := re.FindStringSubmatch(r.URL.Path)
+	web.Respond(w, DebugNext{Uri: r.URL.Path, Matches: matches}, http.StatusOK)
 }
