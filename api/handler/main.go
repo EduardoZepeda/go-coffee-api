@@ -52,5 +52,8 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.GetUser).Methods(http.MethodGet)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.UpdateUser).Methods(http.MethodPut)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.DeleteUser).Methods(http.MethodDelete)
+	api.HandleFunc("/follow", handlers.FollowUser).Methods(http.MethodGet)
+	api.HandleFunc("/follow", handlers.FollowUser).Methods(http.MethodPost)
+	api.HandleFunc("/follow", handlers.UnfollowUser).Methods(http.MethodDelete)
 	api.ServeHTTP(w, r)
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"os"
 
@@ -102,12 +103,13 @@ func (repo *PostgresRepository) DeleteUser(ctx context.Context, id string) error
 }
 
 func (repo *PostgresRepository) FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
-	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO accounts_contact (created, user_from_id, user_to_id) VALUES (current_timestamp, :UserFromId, :UserToId);", followUserRequest)
+	fmt.Println(followUnfollowUserRequest)
+	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO accounts_contact (created, user_from_id, user_to_id) VALUES (current_timestamp, :UserFromId, :UserToId);", followUnfollowUserRequest)
 	return err
 }
 
-func (repo *PostgresRepository) UnFollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
-	_, err := repo.db.NamedExecContext(ctx, "DELETE FROM accounts_contact WHERE user_from_id = :UserFromId, user_to_id = :UserToId);", followUserRequest)
+func (repo *PostgresRepository) UnfollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
+	_, err := repo.db.NamedExecContext(ctx, "DELETE FROM accounts_contact WHERE user_from_id = :UserFromId AND user_to_id = :UserToId;", followUnfollowUserRequest)
 	return err
 }
 
