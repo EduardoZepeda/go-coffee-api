@@ -48,6 +48,8 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/cafes/nearest", handlers.GetNearestCafes).Methods(http.MethodPost)
 	api.HandleFunc("/cafes/search/{searchTerm:[a-z]+}", handlers.SearchCafe).Methods(http.MethodGet)
 	api.HandleFunc("/login", handlers.LoginUser).Methods(http.MethodPost)
-	api.HandleFunc("/signup", handlers.SignupUser).Methods(http.MethodPost)
+	api.HandleFunc("/user", handlers.RegisterUser).Methods(http.MethodPost)
+	api.HandleFunc("/user/{id:[0-9]+}", handlers.GetUser).Methods(http.MethodGet)
+	api.HandleFunc("/user/{id:[0-9]+}", handlers.UpdateUser).Methods(http.MethodPut)
 	api.ServeHTTP(w, r)
 }

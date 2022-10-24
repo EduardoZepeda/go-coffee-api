@@ -16,6 +16,9 @@ type Repository interface {
 	SearchCafe(ctx context.Context, query string, page uint64, size uint64) ([]*models.Shop, error)
 	GetNearestCafes(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.Shop, error)
 	GetUser(ctx context.Context, email string) (*models.User, error)
+	GetUserById(ctx context.Context, id string) (*models.GetUserResponse, error)
+	RegisterUser(ctx context.Context, user *models.SignUpRequest) error
+	UpdateUser(ctx context.Context, user *models.UpdateUserRequest) error
 	Close() error
 }
 
@@ -55,6 +58,18 @@ func GetNearestCafes(ctx context.Context, UserCoordinates *models.UserCoordinate
 
 func GetUser(ctx context.Context, email string) (*models.User, error) {
 	return implementation.GetUser(ctx, email)
+}
+
+func GetUserById(ctx context.Context, id string) (*models.GetUserResponse, error) {
+	return implementation.GetUserById(ctx, id)
+}
+
+func RegisterUser(ctx context.Context, user *models.SignUpRequest) error {
+	return implementation.RegisterUser(ctx, user)
+}
+
+func UpdateUser(ctx context.Context, user *models.UpdateUserRequest) error {
+	return implementation.UpdateUser(ctx, user)
 }
 
 func Close() error {

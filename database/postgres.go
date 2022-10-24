@@ -51,7 +51,7 @@ func (repo *PostgresRepository) CreateCafe(ctx context.Context, shopRequest *mod
 }
 
 func (repo *PostgresRepository) UpdateCafe(ctx context.Context, shopRequest *models.InsertShop) error {
-	_, err := repo.db.NamedExecContext(ctx, "UPDATE shops_shop SET name = :name, location = :Location, address = :Address, rating = :Rating WHERE id = :ID;", shopRequest)
+	_, err := repo.db.NamedExecContext(ctx, "UPDATE shops_shop SET name = :Name, location = :Location, address = :Address, rating = :Rating WHERE id = :ID;", shopRequest)
 	return err
 }
 
@@ -74,8 +74,26 @@ func (repo *PostgresRepository) GetNearestCafes(ctx context.Context, UserCoordin
 
 func (repo *PostgresRepository) GetUser(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	err := repo.db.GetContext(ctx, &user, "SELECT id, email, password FROM auth_user WHERE email = $1;", email)
+	err := repo.db.GetContext(ctx, &user, "SELECT id, email, password FROM accounts_user WHERE email = $1;", email)
 	return &user, err
+}
+
+func (repo *PostgresRepository) GetUserById(ctx context.Context, id string) (*models.GetUserResponse, error) {
+	var user models.GetUserResponse
+	// Null values cannot be converted to string automatically, thus, we need to handle null values from db
+	// COALESCE will return the first not null value, and it must be used together with as <field>, otherwise it will fail
+	err := repo.db.GetContext(ctx, &user, "SELECT id, email, username, first_name, last_name, COALESCE(bio, '') as bio FROM accounts_user WHERE id = $1;", id)
+	return &user, err
+}
+
+func (repo *PostgresRepository) RegisterUser(ctx context.Context, user *models.SignUpRequest) error {
+	_, err := repo.db.ExecContext(ctx, "INSERT INTO accounts_user (is_superuser, password, username, email, is_staff, is_active, first_name, last_name, date_joined) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, current_timestamp);", false, user.HashedPassword, user.Username, user.Email, false, true, "", "")
+	return err
+}
+
+func (repo *PostgresRepository) UpdateUser(ctx context.Context, user *models.UpdateUserRequest) error {
+	_, err := repo.db.NamedExecContext(ctx, "UPDATE accounts_user SET username = :Username, bio = :Bio, first_name = :FirstName, last_name = :LastName WHERE id = :Id;", user)
+	return err
 }
 
 func (repo *PostgresRepository) Close() error {
