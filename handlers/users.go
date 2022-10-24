@@ -147,7 +147,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	// If claims from JWT token and params are differente raise an error
 	if params["id"] != claims["userId"] {
-		web.Respond(w, types.ApiError{Message: "You can't update other people's data."}, http.StatusBadRequest)
+		web.Respond(w, types.ApiError{Message: "You don't have permissions to update this account."}, http.StatusBadRequest)
 		return
 	}
 	// Ignore any id coming from user, and assign it to params id
@@ -185,4 +185,41 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
+}
+
+// Delete the current user godoc
+// @Summary      Delete current user
+// @Description  Delete the current user account
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param id path string true "User ID"
+// @Success      204  {object}  models.EmptyBody
+// @Failure      400  {object}  types.ApiError
+// @Failure      500  {object}  types.ApiError
+// @Router       /user/{id} [delete]
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	tokenString := strings.TrimSpace(r.Header.Get("Authorization"))
+	// User id is obtained from JWT Token
+	claims := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+	if err != nil && token.Valid {
+		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
+		return
+	}
+	// If claims from JWT token and params are differente raise an error
+	if params["id"] != claims["userId"] {
+		web.Respond(w, types.ApiError{Message: "You don't have permissions to delete this account."}, http.StatusBadRequest)
+		return
+	}
+	err = repository.DeleteUser(r.Context(), params["id"])
+	if err != nil {
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		return
+	}
+	web.Respond(w, struct{}{}, http.StatusNoContent)
+	return
 }

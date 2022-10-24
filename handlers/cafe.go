@@ -22,6 +22,9 @@ import (
 // @Produce      json
 // @Param page query int false "Page number"
 // @Param size query int false "Size number"
+// @Param searchTerm query string false "Search term"
+// @Param longitude query float32 false "User longitude"
+// @Param latitude query float32 false "User latitude"
 // @Success      200  {array}  models.Shop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
@@ -38,6 +41,29 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
+	// If there is search term parameter
+	searchTerm := parameters.GetSearchTerm(r)
+	if searchTerm != "" {
+		cafes, err := repository.SearchCafe(r.Context(), searchTerm, page, size)
+		if err != nil {
+			web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+			return
+		}
+		web.Respond(w, cafes, http.StatusOK)
+		return
+	}
+	// if there is latitude and longitude in parameters
+	userCoordinates, err := parameters.GetLongitudeAndLatitudeTerms(r)
+	if userCoordinates != nil && err == nil {
+		cafes, err := repository.GetNearestCafes(r.Context(), userCoordinates)
+		if err != nil {
+			web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+			return
+		}
+		web.Respond(w, cafes, http.StatusOK)
+		return
+	}
+	// List coffes in a default way
 	cafes, err := repository.GetCafes(r.Context(), page, size)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)

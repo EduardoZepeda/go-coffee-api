@@ -19,6 +19,7 @@ type Repository interface {
 	GetUserById(ctx context.Context, id string) (*models.GetUserResponse, error)
 	RegisterUser(ctx context.Context, user *models.SignUpRequest) error
 	UpdateUser(ctx context.Context, user *models.UpdateUserRequest) error
+	DeleteUser(ctx context.Context, id string) error
 	Close() error
 }
 
@@ -70,6 +71,10 @@ func RegisterUser(ctx context.Context, user *models.SignUpRequest) error {
 
 func UpdateUser(ctx context.Context, user *models.UpdateUserRequest) error {
 	return implementation.UpdateUser(ctx, user)
+}
+
+func DeleteUser(ctx context.Context, id string) error {
+	return implementation.DeleteUser(ctx, id)
 }
 
 func Close() error {

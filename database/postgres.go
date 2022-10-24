@@ -96,6 +96,21 @@ func (repo *PostgresRepository) UpdateUser(ctx context.Context, user *models.Upd
 	return err
 }
 
+func (repo *PostgresRepository) DeleteUser(ctx context.Context, id string) error {
+	_, err := repo.db.ExecContext(ctx, "DELETE FROM accounts_user WHERE id = $1;", id)
+	return err
+}
+
+func (repo *PostgresRepository) FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
+	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO accounts_contact (created, user_from_id, user_to_id) VALUES (current_timestamp, :UserFromId, :UserToId);", followUserRequest)
+	return err
+}
+
+func (repo *PostgresRepository) UnFollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
+	_, err := repo.db.NamedExecContext(ctx, "DELETE FROM accounts_contact WHERE user_from_id = :UserFromId, user_to_id = :UserToId);", followUserRequest)
+	return err
+}
+
 func (repo *PostgresRepository) Close() error {
 	return repo.db.Close()
 }

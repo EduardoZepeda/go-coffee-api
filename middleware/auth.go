@@ -29,7 +29,7 @@ func methodIsSafe(method string) bool {
 var (
 	NO_AUTH_NEEDED = []string{
 		"login",
-		"signup",
+		"user",
 		"cafes/nearest",
 	}
 )

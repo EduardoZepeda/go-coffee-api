@@ -51,5 +51,6 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/user", handlers.RegisterUser).Methods(http.MethodPost)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.GetUser).Methods(http.MethodGet)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.UpdateUser).Methods(http.MethodPut)
+	api.HandleFunc("/user/{id:[0-9]+}", handlers.DeleteUser).Methods(http.MethodDelete)
 	api.ServeHTTP(w, r)
 }
