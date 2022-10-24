@@ -139,6 +139,18 @@ paths:
         in: query
         name: size
         type: integer
+      - description: Search term
+        in: query
+        name: searchTerm
+        type: string
+      - description: User longitude
+        in: query
+        name: longitude
+        type: number
+      - description: User latitude
+        in: query
+        name: latitude
+        type: number
       produces:
       - application/json
       responses:
@@ -427,6 +439,34 @@ paths:
       tags:
       - user
   /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the current user account
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Delete current user
+      tags:
+      - user
     get:
       consumes:
       - application/json
