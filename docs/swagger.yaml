@@ -15,6 +15,21 @@ definitions:
     type: object
   models.EmptyBody:
     type: object
+  models.GetUserResponse:
+    properties:
+      bio:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      username:
+        type: string
+    type: object
   models.InsertShop:
     properties:
       address:
@@ -30,6 +45,18 @@ definitions:
       rating:
         type: number
     type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
   models.Shop:
     properties:
       address:
@@ -37,7 +64,7 @@ definitions:
       created_date:
         type: string
       id:
-        type: integer
+        type: string
       location:
         items:
           type: number
@@ -48,6 +75,28 @@ definitions:
         type: string
       rating:
         type: number
+    type: object
+  models.SignUpRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      passwordConfirmation:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      bio:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      username:
+        type: string
     type: object
   models.UserCoordinates:
     properties:
@@ -316,4 +365,128 @@ paths:
       tags:
       - cafe
       - search
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user using email and password receive a JWT as a response
+        from a successful login
+      parameters:
+      - description: 'Login data: email and password'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Login a user,
+      tags:
+      - user
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Register a user using email, username, password and password confirmation
+      parameters:
+      - description: 'Login data: email, password and password confirmation'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Register a new user,
+      tags:
+      - user
+  /user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get id, username, email, first name, last name and bio from a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetUserResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get an user account data,
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update the current user's bio, first name, last name and username
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'User data: id, bio, firstName, lastName and username'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UpdateUserRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Update current user,
+      tags:
+      - user
 swagger: "2.0"
