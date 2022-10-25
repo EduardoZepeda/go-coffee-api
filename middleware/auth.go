@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
+	"github.com/EduardoZepeda/go-coffee-api/utils"
 	"github.com/EduardoZepeda/go-coffee-api/web"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -49,8 +50,12 @@ func AuthenticatedOrReadOnly(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		tokenString := strings.TrimSpace(r.Header.Get("Authorization"))
-		_, err := jwt.ParseWithClaims(tokenString, &models.AppClaims{}, func(token *jwt.Token) (interface{}, error) {
+		tokenString, err := utils.GetTokenFromAuthHeader(r)
+		if err != nil {
+			web.Respond(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		_, err = jwt.ParseWithClaims(tokenString, &models.AppClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
 		if err != nil {

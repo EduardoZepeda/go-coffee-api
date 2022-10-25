@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
 	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/EduardoZepeda/go-coffee-api/types"
+	"github.com/EduardoZepeda/go-coffee-api/utils"
 	"github.com/EduardoZepeda/go-coffee-api/web"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
@@ -83,7 +83,11 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 		return
 	}
-	tokenString := strings.TrimSpace(r.Header.Get("Authorization"))
+	tokenString, err := utils.GetTokenFromAuthHeader(r)
+	if err != nil {
+		web.Respond(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	// User id is obtained from JWT Token
 	claims := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -123,7 +127,11 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 		return
 	}
-	tokenString := strings.TrimSpace(r.Header.Get("Authorization"))
+	tokenString, err := utils.GetTokenFromAuthHeader(r)
+	if err != nil {
+		web.Respond(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	// User id is obtained from JWT Token
 	claims := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {

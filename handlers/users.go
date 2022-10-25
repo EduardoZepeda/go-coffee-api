@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/mail"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
@@ -135,7 +134,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include an id, bio, firstName, lastName and username fields."}, http.StatusBadRequest)
 		return
 	}
-	tokenString := strings.TrimSpace(r.Header.Get("Authorization"))
+	tokenString, err := utils.GetTokenFromAuthHeader(r)
+	if err != nil {
+		web.Respond(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	// User id is obtained from JWT Token
 	claims := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -200,7 +203,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 // @Router       /user/{id} [delete]
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	tokenString := strings.TrimSpace(r.Header.Get("Authorization"))
+	tokenString, err := utils.GetTokenFromAuthHeader(r)
+	if err != nil {
+		web.Respond(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	// User id is obtained from JWT Token
 	claims := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
