@@ -15,6 +15,13 @@ definitions:
     type: object
   models.EmptyBody:
     type: object
+  models.FollowUnfollowRequest:
+    properties:
+      userFromId:
+        type: string
+      userToId:
+        type: string
+    type: object
   models.GetUserResponse:
     properties:
       bio:
@@ -377,6 +384,119 @@ paths:
       tags:
       - cafe
       - search
+  /followers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Return user's followers from a given user Id
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.GetUserResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Return user's followers,
+      tags:
+      - user
+  /following:
+    delete:
+      consumes:
+      - application/json
+      description: Unfollow a user account using its id
+      parameters:
+      - description: Unfollow a user account
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.FollowUnfollowRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.FollowUnfollowRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Unfollow user,
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: Follow a user account using its id
+      parameters:
+      - description: Follow a user account
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.FollowUnfollowRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.FollowUnfollowRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Follow user,
+      tags:
+      - user
+  /following/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Return following users from a given user Id
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.GetUserResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Return following users,
+      tags:
+      - user
   /login:
     post:
       consumes:

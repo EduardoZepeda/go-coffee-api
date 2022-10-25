@@ -22,6 +22,8 @@ type Repository interface {
 	DeleteUser(ctx context.Context, id string) error
 	UnfollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error
 	FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error
+	GetUserFollowing(ctx context.Context, userId string) ([]*models.GetUserResponse, error)
+	GetUserFollowers(ctx context.Context, userId string) ([]*models.GetUserResponse, error)
 	Close() error
 }
 
@@ -77,6 +79,14 @@ func UpdateUser(ctx context.Context, user *models.UpdateUserRequest) error {
 
 func DeleteUser(ctx context.Context, id string) error {
 	return implementation.DeleteUser(ctx, id)
+}
+
+func GetUserFollowing(ctx context.Context, userId string) ([]*models.GetUserResponse, error) {
+	return implementation.GetUserFollowing(ctx, userId)
+}
+
+func GetUserFollowers(ctx context.Context, userId string) ([]*models.GetUserResponse, error) {
+	return implementation.GetUserFollowers(ctx, userId)
 }
 
 func UnfollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {

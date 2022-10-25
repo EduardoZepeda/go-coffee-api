@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"os"
 
@@ -103,7 +102,6 @@ func (repo *PostgresRepository) DeleteUser(ctx context.Context, id string) error
 }
 
 func (repo *PostgresRepository) FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
-	fmt.Println(followUnfollowUserRequest)
 	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO accounts_contact (created, user_from_id, user_to_id) VALUES (current_timestamp, :UserFromId, :UserToId);", followUnfollowUserRequest)
 	return err
 }
@@ -111,6 +109,18 @@ func (repo *PostgresRepository) FollowUser(ctx context.Context, followUnfollowUs
 func (repo *PostgresRepository) UnfollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
 	_, err := repo.db.NamedExecContext(ctx, "DELETE FROM accounts_contact WHERE user_from_id = :UserFromId AND user_to_id = :UserToId;", followUnfollowUserRequest)
 	return err
+}
+
+func (repo *PostgresRepository) GetUserFollowing(ctx context.Context, userId string) ([]*models.GetUserResponse, error) {
+	var users []*models.GetUserResponse
+	err := repo.db.SelectContext(ctx, &users, "SELECT accounts_user.id, username, first_name, last_name, COALESCE(bio, '') as bio, email FROM accounts_user INNER JOIN accounts_contact ON accounts_contact.user_to_id = accounts_user.id WHERE accounts_contact.user_from_id = $1;", userId)
+	return users, err
+}
+
+func (repo *PostgresRepository) GetUserFollowers(ctx context.Context, userId string) ([]*models.GetUserResponse, error) {
+	var users []*models.GetUserResponse
+	err := repo.db.SelectContext(ctx, &users, "SELECT accounts_user.id, username, first_name, last_name, COALESCE(bio, '') as bio, email FROM accounts_user INNER JOIN accounts_contact ON accounts_contact.user_from_id = accounts_user.id WHERE accounts_contact.user_to_id = $1;", userId)
+	return users, err
 }
 
 func (repo *PostgresRepository) Close() error {

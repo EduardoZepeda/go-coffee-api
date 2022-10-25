@@ -44,7 +44,8 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.GetCafeById).Methods(http.MethodGet)
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.UpdateCafe).Methods(http.MethodPut)
 	api.HandleFunc("/cafes/{id:[0-9]+}", handlers.DeleteCafe).Methods(http.MethodDelete)
-	// We prefer a post request to prevent user's location getting saved as links on databases
+	// the last two cafe endpoints are preserved for compatibility purpose, but its functionality
+	// can be replaced by /cafes [get] endpoint
 	api.HandleFunc("/cafes/nearest", handlers.GetNearestCafes).Methods(http.MethodPost)
 	api.HandleFunc("/cafes/search/{searchTerm:[a-z]+}", handlers.SearchCafe).Methods(http.MethodGet)
 	api.HandleFunc("/login", handlers.LoginUser).Methods(http.MethodPost)
@@ -52,8 +53,9 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.GetUser).Methods(http.MethodGet)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.UpdateUser).Methods(http.MethodPut)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.DeleteUser).Methods(http.MethodDelete)
-	api.HandleFunc("/follow", handlers.FollowUser).Methods(http.MethodGet)
-	api.HandleFunc("/follow", handlers.FollowUser).Methods(http.MethodPost)
-	api.HandleFunc("/follow", handlers.UnfollowUser).Methods(http.MethodDelete)
+	api.HandleFunc("/following/{id:[0-9]+}", handlers.GetUserFollowingAccounts).Methods(http.MethodGet)
+	api.HandleFunc("/following", handlers.FollowUser).Methods(http.MethodPost)
+	api.HandleFunc("/following", handlers.UnfollowUser).Methods(http.MethodDelete)
+	api.HandleFunc("/followers/{id:[0-9]+}", handlers.GetUserFollowers).Methods(http.MethodGet)
 	api.ServeHTTP(w, r)
 }
