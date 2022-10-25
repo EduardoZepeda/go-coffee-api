@@ -233,6 +233,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ApiError'
+      security:
+      - ApiKeyAuth: []
       summary: Delete a coffee shop
       tags:
       - cafe

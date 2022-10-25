@@ -1,83 +1,31 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import {
-  Routes,
-  Route,
-} from "react-router-dom";
-import CoffeeShopDocumentation from './components/CoffeeShopDocumentation';
-import DocBreadcrumbs from './components/DocBreadcrumbs';
-import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
-import UsersDocumentation from './components/UsersDocumentation';
-import CoffeeShopModel from './components/CoffeeShopModel';
-import UserModel from './components/UserModel';
-import Home from './components/Home';
-
-const drawerWidth = 240;
-
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: `-${drawerWidth}px`,
-    ...(open && {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    }),
-  }),
-);
-
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
-}));
+import { Typography } from '@mui/material';
+import { Button } from '@mui/material';
 
 export default function App() {
-  const [open, setOpen] = React.useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{backgroundColor: 'grey.900', color: 'white', height: '100vh'}}>
+      <Container sx={{ display: 'flex', flexDirection:'column',  justifyContent: 'center', alignItems: 'center', height: '100%' }}>
       <CssBaseline />
-      <Navbar open={open} handleDrawerOpen={handleDrawerOpen} drawerWidth={drawerWidth} />
-      <Sidebar open={open} handleDrawerClose={handleDrawerClose} drawerWidth={drawerWidth} />
-      <Main open={open}>
-        <DrawerHeader />
-        <DocBreadcrumbs />
-        <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Box sx={{ maxWidth: '100%' }}>
-            <Routes>
-              <Route path="/coffee-shop-documentation" element={<CoffeeShopDocumentation />} />
-              <Route path="/users-documentation" element={<UsersDocumentation />} />
-              <Route path="/coffee-shop-model" element={<CoffeeShopModel />} />
-              <Route path="/user-model" element={<UserModel />} />
-              <Route path="/" element={<Home />} />
-            </Routes>
-          </Box>
-        </Container>
-      </Main>
+      <Box sx={{textAlign: 'center'}}>
+      <img srcset="cup-360w.png 360w,
+             cup-180w.png 180w"
+           sizes="(max-width: 480px) 180px,
+                  360px"
+           src="cup-360w.png" alt="A rainbow cup of coffee" loading="lazy"/>
+        <Typography sx={{textAlign:'center'}} variant="h4" component="h1">Go Coffee API</Typography>
+        <Typography sx={{textAlign:'center'}}>A social network for coffee lovers</Typography>
+      </Box>
+      <Box>
+      <Button href="/api/v1/swagger/" variant="outlined" size="large" sx={{margin: '24px'}}>
+        Go to Coffee API documentation 
+      </Button>
+      </Box>
+      </Container>
     </Box >
   );
 }

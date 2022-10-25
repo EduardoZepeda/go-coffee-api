@@ -366,6 +366,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete a coffee shop object.",
                 "consumes": [
                     "application/json"
