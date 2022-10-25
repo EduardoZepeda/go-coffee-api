@@ -17,7 +17,7 @@ import (
 // Return the list of following users godoc
 // @Summary      Return following users,
 // @Description  Return following users from a given user Id
-// @Tags         user
+// @Tags         follow
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User id"
@@ -42,7 +42,7 @@ func GetUserFollowingAccounts(w http.ResponseWriter, r *http.Request) {
 // Return the list of user's followers  godoc
 // @Summary      Return user's followers,
 // @Description  Return user's followers from a given user Id
-// @Tags         user
+// @Tags         follow
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User id"
@@ -67,7 +67,7 @@ func GetUserFollowers(w http.ResponseWriter, r *http.Request) {
 // Follow a user account godoc
 // @Summary      Follow user,
 // @Description  Follow a user account using its id
-// @Tags         user
+// @Tags         follow
 // @Accept       json
 // @Produce      json
 // @Param request body models.FollowUnfollowRequest true "Follow a user account"
@@ -107,7 +107,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 // Unfollow a user account godoc
 // @Summary      Unfollow user,
 // @Description  Unfollow a user account using its id
-// @Tags         user
+// @Tags         follow
 // @Accept       json
 // @Produce      json
 // @Param request body models.FollowUnfollowRequest true "Unfollow a user account"

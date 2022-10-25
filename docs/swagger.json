@@ -27,7 +27,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "cafes"
+                    "cafe"
                 ],
                 "summary": "Get a list of coffee shops",
                 "parameters": [
@@ -405,7 +405,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Return user's followers,",
                 "parameters": [
@@ -446,7 +446,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Follow user,",
                 "parameters": [
@@ -490,7 +490,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Unfollow user,",
                 "parameters": [
@@ -536,7 +536,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Return following users,",
                 "parameters": [

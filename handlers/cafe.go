@@ -17,7 +17,7 @@ import (
 // GetCafes godoc
 // @Summary      Get a list of coffee shops
 // @Description  Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.
-// @Tags         cafes
+// @Tags         cafe
 // @Accept       json
 // @Produce      json
 // @Param page query int false "Page number"

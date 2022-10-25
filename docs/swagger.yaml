@@ -177,7 +177,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get a list of coffee shops
       tags:
-      - cafes
+      - cafe
     post:
       consumes:
       - application/json
@@ -410,7 +410,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Return user's followers,
       tags:
-      - user
+      - follow
   /following:
     delete:
       consumes:
@@ -440,7 +440,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Unfollow user,
       tags:
-      - user
+      - follow
     post:
       consumes:
       - application/json
@@ -469,7 +469,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Follow user,
       tags:
-      - user
+      - follow
   /following/{id}:
     get:
       consumes:
@@ -496,7 +496,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Return following users,
       tags:
-      - user
+      - follow
   /login:
     post:
       consumes:

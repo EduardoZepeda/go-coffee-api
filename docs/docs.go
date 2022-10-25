@@ -34,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafes"
+                    "cafe"
                 ],
                 "summary": "Get a list of coffee shops",
                 "parameters": [
@@ -412,7 +412,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Return user's followers,",
                 "parameters": [
@@ -453,7 +453,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Follow user,",
                 "parameters": [
@@ -497,7 +497,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Unfollow user,",
                 "parameters": [
@@ -543,7 +543,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "follow"
                 ],
                 "summary": "Return following users,",
                 "parameters": [
