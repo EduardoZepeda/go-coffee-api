@@ -43,6 +43,13 @@ definitions:
       username:
         type: string
     type: object
+  models.LikeUnlikeCoffeeShopRequest:
+    properties:
+      shopId:
+        type: string
+      userId:
+        type: string
+    type: object
   models.LoginRequest:
     properties:
       email:
@@ -153,7 +160,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get a list of coffee shops
       tags:
-      - cafe
+      - coffee shop
     post:
       consumes:
       - application/json
@@ -186,12 +193,12 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Create a new coffee shop
       tags:
-      - cafe
+      - coffee shop
   /cafes/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete a coffee shop object.
+      description: Delete a coffee shop object by its Id.
       parameters:
       - description: Coffee Shop ID
         in: path
@@ -211,7 +218,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Delete a coffee shop
       tags:
-      - cafe
+      - coffee shop
     get:
       consumes:
       - application/json
@@ -237,13 +244,13 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ApiError'
-      summary: Get a new coffee shop by its id
+      summary: Get a coffee shop by its id
       tags:
-      - cafe
+      - coffee shop
     put:
       consumes:
       - application/json
-      description: Update a coffee shop object.
+      description: Update a coffee shop object by its Id.
       parameters:
       - description: Updated Coffee Shop data
         in: body
@@ -272,14 +279,14 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Update a coffee shop
       tags:
-      - cafe
+      - coffee shop
   /cafes/nearest:
     post:
       consumes:
       - application/json
       description: Get a list of the user nearest coffee shops in Guadalajara, ordered
         by distance. It needs user's latitude and longitude as float numbers. Treated
-        as POST to prevent third parties to save users' location into databases.
+        as POST to prevent third parties saving users' location into databases.
       parameters:
       - description: User coordinates (latitude, longitude) in JSON
         in: body
@@ -312,13 +319,14 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get a list of the nearest coffee shops
       tags:
-      - cafe
+      - coffee shop
       - search
   /cafes/search/{searchTerm}:
     get:
       consumes:
       - application/json
-      description: Search a coffee shop by a given word
+      description: Search coffee shops by a given word, default number of results
+        are 10
       parameters:
       - description: Search term
         in: path
@@ -356,9 +364,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ApiError'
-      summary: Search a coffee shop by a given word
+      summary: Search coffee shops by a given word
       tags:
-      - cafe
+      - coffee shop
       - search
   /followers/{id}:
     get:
@@ -473,17 +481,45 @@ paths:
       summary: Return following users,
       tags:
       - follow
-  /likes/{id}:
+  /likes:
+    delete:
+      consumes:
+      - application/json
+      description: Unlike a coffee shop
+      parameters:
+      - description: Unlike a coffee shop
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Unlike a coffee shop
+      tags:
+      - likes
     get:
       consumes:
       - application/json
-      description: Return liked shop data by user id
+      description: Return liked coffee shops data by user id
       parameters:
       - description: User id
-        in: path
-        name: id
-        required: true
-        type: string
+        in: query
+        name: user
+        type: integer
       - description: Page number
         in: query
         name: page
@@ -501,11 +537,44 @@ paths:
             items:
               $ref: '#/definitions/models.CoffeeShop'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.ApiError'
-      summary: Return liked shop by user,
+      summary: Return liked coffee shops by user,
+      tags:
+      - likes
+    post:
+      consumes:
+      - application/json
+      description: Like a coffee shop
+      parameters:
+      - description: Like a coffee shop
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Like a coffee shop
       tags:
       - likes
   /login:

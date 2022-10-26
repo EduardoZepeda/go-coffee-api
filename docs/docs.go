@@ -34,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe"
+                    "coffee shop"
                 ],
                 "summary": "Get a list of coffee shops",
                 "parameters": [
@@ -102,7 +102,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe"
+                    "coffee shop"
                 ],
                 "summary": "Create a new coffee shop",
                 "parameters": [
@@ -146,7 +146,7 @@ const docTemplate = `{
         },
         "/cafes/nearest": {
             "post": {
-                "description": "Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties to save users' location into databases.",
+                "description": "Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties saving users' location into databases.",
                 "consumes": [
                     "application/json"
                 ],
@@ -154,7 +154,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe",
+                    "coffee shop",
                     "search"
                 ],
                 "summary": "Get a list of the nearest coffee shops",
@@ -205,7 +205,7 @@ const docTemplate = `{
         },
         "/cafes/search/{searchTerm}": {
             "get": {
-                "description": "Search a coffee shop by a given word",
+                "description": "Search coffee shops by a given word, default number of results are 10",
                 "consumes": [
                     "application/json"
                 ],
@@ -213,10 +213,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe",
+                    "coffee shop",
                     "search"
                 ],
-                "summary": "Search a coffee shop by a given word",
+                "summary": "Search coffee shops by a given word",
                 "parameters": [
                     {
                         "type": "string",
@@ -282,9 +282,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe"
+                    "coffee shop"
                 ],
-                "summary": "Get a new coffee shop by its id",
+                "summary": "Get a coffee shop by its id",
                 "parameters": [
                     {
                         "type": "string",
@@ -316,7 +316,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update a coffee shop object.",
+                "description": "Update a coffee shop object by its Id.",
                 "consumes": [
                     "application/json"
                 ],
@@ -324,7 +324,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe"
+                    "coffee shop"
                 ],
                 "summary": "Update a coffee shop",
                 "parameters": [
@@ -366,7 +366,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete a coffee shop object.",
+                "description": "Delete a coffee shop object by its Id.",
                 "consumes": [
                     "application/json"
                 ],
@@ -374,7 +374,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "cafe"
+                    "coffee shop"
                 ],
                 "summary": "Delete a coffee shop",
                 "parameters": [
@@ -574,9 +574,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/likes/{id}": {
+        "/likes": {
             "get": {
-                "description": "Return liked shop data by user id",
+                "description": "Return liked coffee shops data by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -586,14 +586,13 @@ const docTemplate = `{
                 "tags": [
                     "likes"
                 ],
-                "summary": "Return liked shop by user,",
+                "summary": "Return liked coffee shops by user,",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "name": "user",
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -616,6 +615,100 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.CoffeeShop"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Like a coffee shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "likes"
+                ],
+                "summary": "Like a coffee shop",
+                "parameters": [
+                    {
+                        "description": "Like a coffee shop",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Unlike a coffee shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "likes"
+                ],
+                "summary": "Unlike a coffee shop",
+                "parameters": [
+                    {
+                        "description": "Unlike a coffee shop",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
                         }
                     },
                     "500": {
@@ -920,6 +1013,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LikeUnlikeCoffeeShopRequest": {
+            "type": "object",
+            "properties": {
+                "shopId": {
+                    "type": "string"
+                },
+                "userId": {
                     "type": "string"
                 }
             }
