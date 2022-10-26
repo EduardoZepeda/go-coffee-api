@@ -9,12 +9,13 @@ import (
 	"github.com/EduardoZepeda/go-coffee-api/parameters"
 	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/EduardoZepeda/go-coffee-api/types"
+	"github.com/EduardoZepeda/go-coffee-api/validator"
 
 	"github.com/EduardoZepeda/go-coffee-api/web"
 	"github.com/gorilla/mux"
 )
 
-// GetCafes godoc
+// GetCoffeeShops godoc
 // @Summary      Get a list of coffee shops
 // @Description  Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.
 // @Tags         cafe
@@ -25,11 +26,11 @@ import (
 // @Param searchTerm query string false "Search term"
 // @Param longitude query float32 false "User longitude"
 // @Param latitude query float32 false "User latitude"
-// @Success      200  {array}  models.Shop
+// @Success      200  {array}  models.CoffeeShop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes [get]
-func GetCafes(w http.ResponseWriter, r *http.Request) {
+func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	var err error
 	page, err := parameters.GetPage(r)
 	if err != nil {
@@ -44,7 +45,7 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 	// If there is search term parameter
 	searchTerm := parameters.GetSearchTerm(r)
 	if searchTerm != "" {
-		cafes, err := repository.SearchCafe(r.Context(), searchTerm, page, size)
+		cafes, err := repository.SearchCoffeeShops(r.Context(), searchTerm, page, size)
 		if err != nil {
 			web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 			return
@@ -55,7 +56,7 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 	// if there is latitude and longitude in parameters
 	userCoordinates, err := parameters.GetLongitudeAndLatitudeTerms(r)
 	if userCoordinates != nil && err == nil {
-		cafes, err := repository.GetNearestCafes(r.Context(), userCoordinates)
+		cafes, err := repository.GetNearestCoffeeShop(r.Context(), userCoordinates)
 		if err != nil {
 			web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 			return
@@ -64,7 +65,7 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// List coffes in a default way
-	cafes, err := repository.GetCafes(r.Context(), page, size)
+	cafes, err := repository.GetCoffeeShops(r.Context(), page, size)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
@@ -77,20 +78,20 @@ func GetCafes(w http.ResponseWriter, r *http.Request) {
 	web.Respond(w, cafes, http.StatusOK)
 }
 
-// GetCafeById godoc
+// GetCoffeeShopById godoc
 // @Summary      Get a new coffee shop by its id
 // @Description  Get a specific coffee shop object. Id parameter must be an integer.
 // @Tags         cafe
 // @Accept       json
 // @Produce      json
 // @Param id path string true "Coffee Shop ID"
-// @Success      200  {object}  models.Shop
+// @Success      200  {object}  models.CoffeeShop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes/{id} [get]
-func GetCafeById(w http.ResponseWriter, r *http.Request) {
+func GetCoffeeShopById(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	cafe, err := repository.GetCafeById(r.Context(), params["id"])
+	cafe, err := repository.GetCoffeeShopById(r.Context(), params["id"])
 	switch err {
 	case nil:
 		web.Respond(w, cafe, http.StatusOK)
@@ -103,66 +104,77 @@ func GetCafeById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CreateCafe godoc
+// CreateCoffeeShop godoc
 // @Summary      Create a new coffee shop
 // @Description  Create a coffee shop object.
 // @Tags         cafe
 // @Accept       json
 // @Produce      json
-// @Param request body models.CreateShop true "New Coffee Shop data"
-// @Success      200  {object}  models.CreateShop
+// @Param request body models.CoffeeShop true "New Coffee Shop data"
+// @Success      200  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes [post]
-func CreateCafe(w http.ResponseWriter, r *http.Request) {
-	var shopRequest = models.CreateShop{}
+func CreateCoffeeShop(w http.ResponseWriter, r *http.Request) {
+	var coffeeShop = models.CoffeeShop{}
 	decoder := json.NewDecoder(r.Body)
 	// If the JSON in the body has other fields not included in the struct from the parameter, returns an error.
 	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&shopRequest); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include name, location, address and rating."}, http.StatusBadRequest)
+	if err := decoder.Decode(&coffeeShop); err != nil {
+		web.Respond(w, types.ApiError{Message: "Invalid JSON syntax in body request."}, http.StatusBadRequest)
 		return
 	}
-	err := repository.CreateCafe(r.Context(), &shopRequest)
+	v := validator.New()
+	if validator.ValidateCoffeeShop(v, &coffeeShop); !v.Valid() {
+		web.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
+		return
+	}
+	err := repository.CreateCoffeeShop(r.Context(), &coffeeShop)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
-	web.Respond(w, shopRequest, http.StatusCreated)
+	web.Respond(w, coffeeShop, http.StatusCreated)
+	return
 }
 
-// UpdateCafe godoc
+// UpdateCoffeeShop godoc
 // @Summary      Update a coffee shop
 // @Description  Update a coffee shop object.
 // @Tags         cafe
 // @Accept       json
 // @Produce      json
-// @Param request body models.InsertShop true "Updated Coffee Shop data"
-// @Success      200  {object}  models.InsertShop
+// @Param request body models.CoffeeShop true "Updated Coffee Shop data"
+// @Success      200  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes/{id} [put]
-func UpdateCafe(w http.ResponseWriter, r *http.Request) {
+func UpdateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var shopRequest = models.InsertShop{}
-	shopRequest.ID = params["id"]
+	var coffeeShop = models.CoffeeShop{}
+	coffeeShop.ID = params["id"]
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&shopRequest); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include name, location, address and rating."}, http.StatusBadRequest)
+	if err := decoder.Decode(&coffeeShop); err != nil {
+		web.Respond(w, types.ApiError{Message: "Invalid JSON syntax in body request."}, http.StatusBadRequest)
 		return
 	}
-	err := repository.UpdateCafe(r.Context(), &shopRequest)
+	v := validator.New()
+	if validator.ValidateCoffeeShop(v, &coffeeShop); !v.Valid() {
+		web.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
+		return
+	}
+	err := repository.UpdateCoffeeShop(r.Context(), &coffeeShop)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
 	}
-	web.Respond(w, &shopRequest, http.StatusOK)
+	web.Respond(w, &coffeeShop, http.StatusOK)
 }
 
-// DeleteCafe godoc
+// DeleteCoffeeShop godoc
 // @Summary      Delete a coffee shop
 // @Description  Delete a coffee shop object.
 // @Tags         cafe
@@ -172,9 +184,9 @@ func UpdateCafe(w http.ResponseWriter, r *http.Request) {
 // @Success      204  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes/{id} [delete]
-func DeleteCafe(w http.ResponseWriter, r *http.Request) {
+func DeleteCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	err := repository.DeleteCafe(r.Context(), params["id"])
+	err := repository.DeleteCoffeeShop(r.Context(), params["id"])
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
@@ -182,7 +194,7 @@ func DeleteCafe(w http.ResponseWriter, r *http.Request) {
 	web.Respond(w, struct{}{}, http.StatusNoContent)
 }
 
-// SearchCafe godoc
+// SearchCoffeeShops godoc
 // @Summary      Search a coffee shop by a given word
 // @Description  Search a coffee shop by a given word
 // @Tags         cafe,search
@@ -191,12 +203,12 @@ func DeleteCafe(w http.ResponseWriter, r *http.Request) {
 // @Param searchTerm path string true "Search term"
 // @Param page query int false "Page number"
 // @Param size query int false "Size number"
-// @Success      200 {array}  models.Shop
+// @Success      200 {array}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Failure      404  {object}  []models.EmptyBody
 // @Router       /cafes/search/{searchTerm} [get]
-func SearchCafe(w http.ResponseWriter, r *http.Request) {
+func SearchCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	var err error
 	params := mux.Vars(r)
 	page, err := parameters.GetPage(r)
@@ -209,7 +221,7 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
-	cafes, err := repository.SearchCafe(r.Context(), params["searchTerm"], page, size)
+	cafes, err := repository.SearchCoffeeShops(r.Context(), params["searchTerm"], page, size)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return
@@ -229,20 +241,20 @@ func SearchCafe(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param request body models.UserCoordinates true "User coordinates (latitude, longitude) in JSON"
-// @Success      200 {array}  models.Shop
+// @Success      200 {array}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Failure      404  {object}  []models.EmptyBody
 // @Router       /cafes/nearest [post]
-func GetNearestCafes(w http.ResponseWriter, r *http.Request) {
+func GetNearestCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	var userCoordinates = models.UserCoordinates{}
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&userCoordinates); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
+		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
 		return
 	}
-	cafes, err := repository.GetNearestCafes(r.Context(), &userCoordinates)
+	cafes, err := repository.GetNearestCoffeeShop(r.Context(), &userCoordinates)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
 		return

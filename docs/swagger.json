@@ -68,7 +68,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Shop"
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -105,7 +105,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     }
                 ],
@@ -113,7 +113,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CreateShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     },
                     "400": {
@@ -168,7 +168,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Shop"
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -237,7 +237,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Shop"
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -291,7 +291,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Shop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     },
                     "404": {
@@ -327,7 +327,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InsertShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     }
                 ],
@@ -335,7 +335,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.InsertShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     },
                     "400": {
@@ -359,11 +359,6 @@
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Delete a coffee shop object.",
                 "consumes": [
                     "application/json"
@@ -560,6 +555,59 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.GetUserResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/likes/{id}": {
+            "get": {
+                "description": "Return liked shop data by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "likes"
+                ],
+                "summary": "Return liked shop by user,",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size number",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -803,10 +851,16 @@
         }
     },
     "definitions": {
-        "models.CreateShop": {
+        "models.CoffeeShop": {
             "type": "object",
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 },
                 "location": {
@@ -814,6 +868,9 @@
                     "items": {
                         "type": "number"
                     }
+                },
+                "modified_date": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -860,29 +917,6 @@
                 }
             }
         },
-        "models.InsertShop": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "number"
-                }
-            }
-        },
         "models.LoginRequest": {
             "type": "object",
             "properties": {
@@ -899,35 +933,6 @@
             "properties": {
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "models.Shop": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "created_date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
-                },
-                "modified_date": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "number"
                 }
             }
         },
@@ -979,6 +984,12 @@
         "types.ApiError": {
             "type": "object",
             "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "message": {
                     "type": "string"
                 }

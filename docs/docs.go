@@ -75,7 +75,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Shop"
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -112,7 +112,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     }
                 ],
@@ -120,7 +120,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CreateShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     },
                     "400": {
@@ -175,7 +175,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Shop"
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -244,7 +244,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Shop"
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -298,7 +298,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Shop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     },
                     "404": {
@@ -334,7 +334,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InsertShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     }
                 ],
@@ -342,7 +342,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.InsertShop"
+                            "$ref": "#/definitions/models.CoffeeShop"
                         }
                     },
                     "400": {
@@ -366,11 +366,6 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Delete a coffee shop object.",
                 "consumes": [
                     "application/json"
@@ -567,6 +562,59 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.GetUserResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/likes/{id}": {
+            "get": {
+                "description": "Return liked shop data by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "likes"
+                ],
+                "summary": "Return liked shop by user,",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size number",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CoffeeShop"
                             }
                         }
                     },
@@ -810,10 +858,16 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.CreateShop": {
+        "models.CoffeeShop": {
             "type": "object",
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 },
                 "location": {
@@ -821,6 +875,9 @@ const docTemplate = `{
                     "items": {
                         "type": "number"
                     }
+                },
+                "modified_date": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -867,29 +924,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.InsertShop": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "number"
-                }
-            }
-        },
         "models.LoginRequest": {
             "type": "object",
             "properties": {
@@ -906,35 +940,6 @@ const docTemplate = `{
             "properties": {
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "models.Shop": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "created_date": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "location": {
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
-                },
-                "modified_date": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "number"
                 }
             }
         },
@@ -986,6 +991,12 @@ const docTemplate = `{
         "types.ApiError": {
             "type": "object",
             "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "message": {
                     "type": "string"
                 }

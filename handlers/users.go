@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"net/mail"
 	"os"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/EduardoZepeda/go-coffee-api/types"
 	"github.com/EduardoZepeda/go-coffee-api/utils"
+	"github.com/EduardoZepeda/go-coffee-api/validator"
 	"github.com/EduardoZepeda/go-coffee-api/web"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
@@ -86,16 +86,12 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&SignUpRequest); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid sintax. Request body must include an email, password, passwordConfirmation and username fields."}, http.StatusBadRequest)
+		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include an email, password, passwordConfirmation and username fields."}, http.StatusBadRequest)
 		return
 	}
-	if SignUpRequest.Password != SignUpRequest.PasswordConfirmation {
-		web.Respond(w, types.ApiError{Message: "Your password confirmation didn't match your password. Please make sure both are the same."}, http.StatusBadRequest)
-		return
-	}
-	_, err := mail.ParseAddress(SignUpRequest.Email)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Please enter a valid email address"}, http.StatusBadRequest)
+	v := validator.New()
+	if validator.ValidateUserSignup(v, &SignUpRequest); !v.Valid() {
+		web.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
 		return
 	}
 	hashedPassword, err := utils.GenerateDjangoHashedPassword(SignUpRequest.Password)
@@ -134,23 +130,20 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include an id, bio, firstName, lastName and username fields."}, http.StatusBadRequest)
 		return
 	}
-	tokenString, err := utils.GetTokenFromAuthHeader(r)
+	userId, err := utils.GetDataFromToken(r, "UserId")
 	if err != nil {
-		web.Respond(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	// User id is obtained from JWT Token
-	claims := jwt.MapClaims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
-	})
-	if err != nil && token.Valid {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return
 	}
 	// If claims from JWT token and params are differente raise an error
-	if params["id"] != claims["userId"] {
+	if params["id"] != userId {
 		web.Respond(w, types.ApiError{Message: "You don't have permissions to update this account."}, http.StatusBadRequest)
+		return
+	}
+	// Validate update fields
+	v := validator.New()
+	if validator.ValidateUserUpdate(v, &UpdateUserRequest); !v.Valid() {
+		web.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
 		return
 	}
 	// Ignore any id coming from user, and assign it to params id
@@ -160,7 +153,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
-	web.Respond(w, &UpdateUserRequest, http.StatusAccepted)
+	web.Respond(w, &UpdateUserRequest, http.StatusOK)
 	return
 }
 
@@ -203,22 +196,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 // @Router       /user/{id} [delete]
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	tokenString, err := utils.GetTokenFromAuthHeader(r)
+	userId, err := utils.GetDataFromToken(r, "UserId")
 	if err != nil {
-		web.Respond(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	// User id is obtained from JWT Token
-	claims := jwt.MapClaims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
-	})
-	if err != nil && token.Valid {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return
 	}
 	// If claims from JWT token and params are differente raise an error
-	if params["id"] != claims["userId"] {
+	if params["id"] != userId {
 		web.Respond(w, types.ApiError{Message: "You don't have permissions to delete this account."}, http.StatusBadRequest)
 		return
 	}

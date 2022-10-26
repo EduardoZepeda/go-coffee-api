@@ -8,13 +8,13 @@ import (
 )
 
 type Repository interface {
-	GetCafes(ctx context.Context, page uint64, size uint64) ([]*models.Shop, error)
-	GetCafeById(ctx context.Context, id string) (*models.Shop, error)
-	CreateCafe(ctx context.Context, shopRequest *models.CreateShop) error
-	DeleteCafe(ctx context.Context, id string) error
-	UpdateCafe(ctx context.Context, shopRequest *models.InsertShop) error
-	SearchCafe(ctx context.Context, query string, page uint64, size uint64) ([]*models.Shop, error)
-	GetNearestCafes(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.Shop, error)
+	GetCoffeeShops(ctx context.Context, page uint64, size uint64) ([]*models.CoffeeShop, error)
+	GetCoffeeShopById(ctx context.Context, id string) (*models.CoffeeShop, error)
+	CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error
+	DeleteCoffeeShop(ctx context.Context, id string) error
+	UpdateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error
+	SearchCoffeeShops(ctx context.Context, query string, page uint64, size uint64) ([]*models.CoffeeShop, error)
+	GetNearestCoffeeShop(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.CoffeeShop, error)
 	GetUser(ctx context.Context, email string) (*models.User, error)
 	GetUserById(ctx context.Context, id string) (*models.GetUserResponse, error)
 	RegisterUser(ctx context.Context, user *models.SignUpRequest) error
@@ -24,6 +24,9 @@ type Repository interface {
 	FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error
 	GetUserFollowing(ctx context.Context, userId string) ([]*models.GetUserResponse, error)
 	GetUserFollowers(ctx context.Context, userId string) ([]*models.GetUserResponse, error)
+	GetLikedCoffeeShops(ctx context.Context, likes *models.LikesByUserRequest) ([]*models.CoffeeShop, error)
+	LikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error
+	UnlikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error
 	Close() error
 }
 
@@ -33,32 +36,32 @@ func SetRepository(repository Repository) {
 	implementation = repository
 }
 
-func GetCafes(ctx context.Context, page uint64, size uint64) ([]*models.Shop, error) {
-	return implementation.GetCafes(ctx, page, size)
+func GetCoffeeShops(ctx context.Context, page uint64, size uint64) ([]*models.CoffeeShop, error) {
+	return implementation.GetCoffeeShops(ctx, page, size)
 }
 
-func GetCafeById(ctx context.Context, id string) (*models.Shop, error) {
-	return implementation.GetCafeById(ctx, id)
+func GetCoffeeShopById(ctx context.Context, id string) (*models.CoffeeShop, error) {
+	return implementation.GetCoffeeShopById(ctx, id)
 }
 
-func CreateCafe(ctx context.Context, shopRequest *models.CreateShop) error {
-	return implementation.CreateCafe(ctx, shopRequest)
+func CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
+	return implementation.CreateCoffeeShop(ctx, shopRequest)
 }
 
-func DeleteCafe(ctx context.Context, id string) error {
-	return implementation.DeleteCafe(ctx, id)
+func DeleteCoffeeShop(ctx context.Context, id string) error {
+	return implementation.DeleteCoffeeShop(ctx, id)
 }
 
-func UpdateCafe(ctx context.Context, shopRequest *models.InsertShop) error {
-	return implementation.UpdateCafe(ctx, shopRequest)
+func UpdateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
+	return implementation.UpdateCoffeeShop(ctx, shopRequest)
 }
 
-func SearchCafe(ctx context.Context, query string, page uint64, size uint64) ([]*models.Shop, error) {
-	return implementation.SearchCafe(ctx, query, page, size)
+func SearchCoffeeShops(ctx context.Context, query string, page uint64, size uint64) ([]*models.CoffeeShop, error) {
+	return implementation.SearchCoffeeShops(ctx, query, page, size)
 }
 
-func GetNearestCafes(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.Shop, error) {
-	return implementation.GetNearestCafes(ctx, UserCoordinates)
+func GetNearestCoffeeShop(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.CoffeeShop, error) {
+	return implementation.GetNearestCoffeeShop(ctx, UserCoordinates)
 }
 
 func GetUser(ctx context.Context, email string) (*models.User, error) {
@@ -95,6 +98,18 @@ func UnfollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowU
 
 func FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
 	return implementation.FollowUser(ctx, followUnfollowUserRequest)
+}
+
+func GetLikedCoffeeShops(ctx context.Context, likes *models.LikesByUserRequest) ([]*models.CoffeeShop, error) {
+	return implementation.GetLikedCoffeeShops(ctx, likes)
+}
+
+func LikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error {
+	return implementation.LikeCoffeeShop(ctx, like)
+}
+
+func UnlikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error {
+	return implementation.UnlikeCoffeeShop(ctx, like)
 }
 
 func Close() error {
