@@ -4,6 +4,7 @@ type User struct {
 	Id       string `json:"id"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	IsStaff  bool   `db:"is_staff" json:"isStaff"`
 }
 
 type LoginRequest struct {
@@ -25,6 +26,7 @@ type GetUserResponse struct {
 	Username  string `db:"username" json:"username"`
 	FirstName string `db:"first_name" json:"firstName"`
 	LastName  string `db:"last_name" json:"lastName"`
+	IsStaff   string `db:"is_staff" json:"isStaff"`
 	Bio       string `db:"bio" json:"bio"`
 }
 

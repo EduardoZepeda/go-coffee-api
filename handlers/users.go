@@ -52,7 +52,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	claims := models.AppClaims{
-		UserId: user.Id,
+		UserId:  user.Id,
+		IsStaff: user.IsStaff,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(2 * time.Hour * 24).Unix(),
 		},

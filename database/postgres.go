@@ -76,7 +76,7 @@ func (repo *PostgresRepository) GetNearestCoffeeShop(ctx context.Context, UserCo
 
 func (repo *PostgresRepository) GetUser(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	err := repo.db.GetContext(ctx, &user, "SELECT id, email, password FROM accounts_user WHERE email = $1;", email)
+	err := repo.db.GetContext(ctx, &user, "SELECT id, email, password, is_staff FROM accounts_user WHERE email = $1;", email)
 	return &user, err
 }
 
