@@ -18,7 +18,7 @@ import (
 // GetCoffeeShops godoc
 // @Summary      Get a list of coffee shops
 // @Description  Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.
-// @Tags         cafe
+// @Tags         coffee shop
 // @Accept       json
 // @Produce      json
 // @Param page query int false "Page number"
@@ -32,18 +32,18 @@ import (
 // @Router       /cafes [get]
 func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	var err error
-	page, err := parameters.GetPage(r)
+	page, err := parameters.GetIntParam(r, "page", 0)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
-	size, err := parameters.GetSize(r)
+	size, err := parameters.GetIntParam(r, "size", 10)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
 	// If there is search term parameter
-	searchTerm := parameters.GetSearchTerm(r)
+	searchTerm := parameters.GetStringParam(r, "search", "")
 	if searchTerm != "" {
 		cafes, err := repository.SearchCoffeeShops(r.Context(), searchTerm, page, size)
 		if err != nil {
@@ -79,9 +79,9 @@ func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetCoffeeShopById godoc
-// @Summary      Get a new coffee shop by its id
+// @Summary      Get a coffee shop by its id
 // @Description  Get a specific coffee shop object. Id parameter must be an integer.
-// @Tags         cafe
+// @Tags         coffee shop
 // @Accept       json
 // @Produce      json
 // @Param id path string true "Coffee Shop ID"
@@ -107,7 +107,7 @@ func GetCoffeeShopById(w http.ResponseWriter, r *http.Request) {
 // CreateCoffeeShop godoc
 // @Summary      Create a new coffee shop
 // @Description  Create a coffee shop object.
-// @Tags         cafe
+// @Tags         coffee shop
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "New Coffee Shop data"
@@ -141,8 +141,8 @@ func CreateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 
 // UpdateCoffeeShop godoc
 // @Summary      Update a coffee shop
-// @Description  Update a coffee shop object.
-// @Tags         cafe
+// @Description  Update a coffee shop object by its Id.
+// @Tags         coffee shop
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "Updated Coffee Shop data"
@@ -176,8 +176,8 @@ func UpdateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 
 // DeleteCoffeeShop godoc
 // @Summary      Delete a coffee shop
-// @Description  Delete a coffee shop object.
-// @Tags         cafe
+// @Description  Delete a coffee shop object by its Id.
+// @Tags         coffee shop
 // @Accept       json
 // @Produce      json
 // @Param id path string true "Coffee Shop ID"
@@ -195,9 +195,9 @@ func DeleteCoffeeShop(w http.ResponseWriter, r *http.Request) {
 }
 
 // SearchCoffeeShops godoc
-// @Summary      Search a coffee shop by a given word
-// @Description  Search a coffee shop by a given word
-// @Tags         cafe,search
+// @Summary      Search coffee shops by a given word
+// @Description  Search coffee shops by a given word, default number of results are 10
+// @Tags         coffee shop, search
 // @Accept       json
 // @Produce      json
 // @Param searchTerm path string true "Search term"
@@ -211,12 +211,12 @@ func DeleteCoffeeShop(w http.ResponseWriter, r *http.Request) {
 func SearchCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	var err error
 	params := mux.Vars(r)
-	page, err := parameters.GetPage(r)
+	page, err := parameters.GetIntParam(r, "page", 0)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
-	size, err := parameters.GetSize(r)
+	size, err := parameters.GetIntParam(r, "size", 10)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
@@ -236,8 +236,8 @@ func SearchCoffeeShops(w http.ResponseWriter, r *http.Request) {
 
 // NearestCafe godoc
 // @Summary      Get a list of the nearest coffee shops
-// @Description  Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties to save users' location into databases.
-// @Tags         cafe,search
+// @Description  Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties saving users' location into databases.
+// @Tags         coffee shop,search
 // @Accept       json
 // @Produce      json
 // @Param request body models.UserCoordinates true "User coordinates (latitude, longitude) in JSON"

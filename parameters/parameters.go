@@ -8,39 +8,25 @@ import (
 	"github.com/EduardoZepeda/go-coffee-api/models"
 )
 
-func GetPage(r *http.Request) (uint64, error) {
+func GetIntParam(r *http.Request, parameter string, defaultValue uint64) (uint64, error) {
 	var err error
-	pageStr := r.URL.Query().Get("page")
-	var page = uint64(0)
+	pageStr := r.URL.Query().Get(parameter)
+	var page = uint64(defaultValue)
 	if pageStr != "" {
 		page, err = strconv.ParseUint(pageStr, 10, 64)
 		if err != nil {
-			return page, errors.New("Page parameter must be a positive integer. For example: &page=1")
+			return page, errors.New("Parameter must be a positive integer. For example: &page=1")
 		}
 	}
 	return page, nil
 }
 
-func GetSize(r *http.Request) (uint64, error) {
-	var err error
-	sizeStr := r.URL.Query().Get("size")
-	// Default offset value of 10
-	var size = uint64(10)
-	if sizeStr != "" {
-		size, err = strconv.ParseUint(sizeStr, 10, 64)
-		if err != nil {
-			return size, errors.New("Size parameter must be a positive integer. For example: &size=5")
-		}
+func GetStringParam(r *http.Request, parameter string, defaultValue string) string {
+	value := r.URL.Query().Get(parameter)
+	if value != "" {
+		return value
 	}
-	return size, nil
-}
-
-func GetSearchTerm(r *http.Request) string {
-	return r.URL.Query().Get("search")
-}
-
-func GetUserTerm(r *http.Request) string {
-	return r.URL.Query().Get("user")
+	return defaultValue
 }
 
 func GetLongitudeAndLatitudeTerms(r *http.Request) (*models.UserCoordinates, error) {
