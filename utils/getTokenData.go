@@ -31,5 +31,9 @@ func GetDataFromToken(r *http.Request, data string) (string, error) {
 	if err != nil && token.Valid {
 		return "", err
 	}
-	return claims[data].(string), nil
+	tokenData, ok := claims[data].(string)
+	if !ok {
+		return "", errors.New("Can't convert data from token to a valid string")
+	}
+	return tokenData, nil
 }

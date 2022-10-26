@@ -81,7 +81,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 		return
 	}
-	userId, err := utils.GetDataFromToken(r, "UserId")
+	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return
@@ -116,7 +116,7 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 		return
 	}
-	userId, err := utils.GetDataFromToken(r, "UserId")
+	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return

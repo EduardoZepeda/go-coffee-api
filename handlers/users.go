@@ -102,7 +102,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	SignUpRequest.HashedPassword = hashedPassword
 	err = repository.RegisterUser(r.Context(), &SignUpRequest)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong with your user registration process."}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, struct{}{}, http.StatusCreated)
@@ -130,7 +130,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include an id, bio, firstName, lastName and username fields."}, http.StatusBadRequest)
 		return
 	}
-	userId, err := utils.GetDataFromToken(r, "UserId")
+	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return
@@ -196,7 +196,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 // @Router       /user/{id} [delete]
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userId, err := utils.GetDataFromToken(r, "UserId")
+	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return

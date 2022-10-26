@@ -14,31 +14,37 @@ import (
 )
 
 // Return the list of likes by user id godoc
-// @Summary      Return liked shop by user,
-// @Description  Return liked shop data by user id
+// @Summary      Return liked coffee shops by user,
+// @Description  Return liked coffee shops data by user id
 // @Tags         likes
 // @Accept       json
 // @Produce      json
-// @Param id path string true "User id"
+// @Param user query int false "User id"
 // @Param page query int false "Page number"
 // @Param size query int false "Size number"
 // @Success      200  {array}  models.CoffeeShop
+// @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /likes/{id} [get]
+// @Router       /likes [get]
 func GetLikedCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	var err error
-	params := mux.Vars(r)
-	page, err := parameters.GetPage(r)
+	page, err := parameters.GetIntParam(r, "page", 0)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
-	size, err := parameters.GetSize(r)
+	size, err := parameters.GetIntParam(r, "size", 10)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
-	likesByUser := models.LikesByUserRequest{Size: size, Page: page, UserId: params["user_id"]}
+	currentUserId, err := utils.GetDataFromToken(r, "userId")
+	if err != nil {
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
+		return
+	}
+	userId := parameters.GetStringParam(r, "user", currentUserId)
+	likesByUser := models.LikesByUserRequest{Size: size, Page: page, UserId: userId}
 	// If there is search term parameter
 	shops, err := repository.GetLikedCoffeeShops(r.Context(), &likesByUser)
 	if err != nil {
@@ -53,17 +59,17 @@ func GetLikedCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// Follow a user account godoc
-// @Summary      Follow user,
-// @Description  Follow a user account using its id
-// @Tags         follow
+// Like a coffee shop godoc
+// @Summary      Like a coffee shop
+// @Description  Like a coffee shop
+// @Tags         likes
 // @Accept       json
 // @Produce      json
-// @Param request body models.FollowUnfollowRequest true "Follow a user account"
-// @Success      201  {object}  models.FollowUnfollowRequest
+// @Param request body models.LikeUnlikeCoffeeShopRequest true "Like a coffee shop"
+// @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /following [post]
+// @Router       /likes [post]
 func LikeCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	var LikeRequest = models.LikeUnlikeCoffeeShopRequest{}
 	decoder := json.NewDecoder(r.Body)
@@ -72,9 +78,9 @@ func LikeCoffeeShop(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 		return
 	}
-	userId, err := utils.GetDataFromToken(r, "UserId")
+	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
 	// Cast userId as String
@@ -88,20 +94,20 @@ func LikeCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// Unlike a user account godoc
-// @Summary      Unfollow user,
-// @Description  Unfollow a user account using its id
-// @Tags         follow
+// Unlike a coffee shop godoc
+// @Summary      Unlike a coffee shop
+// @Description  Unlike a coffee shop
+// @Tags         likes
 // @Accept       json
 // @Produce      json
-// @Param request body models.FollowUnfollowRequest true "Unfollow a user account"
-// @Success      204  {object}  models.FollowUnfollowRequest
+// @Param request body models.LikeUnlikeCoffeeShopRequest true "Unlike a coffee shop"
+// @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /following [delete]
+// @Router       /likes [delete]
 func UnlikeCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	userId, err := utils.GetDataFromToken(r, "UserId")
+	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return
