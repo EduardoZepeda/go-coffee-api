@@ -2,8 +2,10 @@ package database
 
 import (
 	"context"
+	"errors"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
 	"github.com/jmoiron/sqlx"
@@ -88,6 +90,12 @@ func (repo *PostgresRepository) GetUserById(ctx context.Context, id string) (*mo
 
 func (repo *PostgresRepository) RegisterUser(ctx context.Context, user *models.SignUpRequest) error {
 	_, err := repo.db.ExecContext(ctx, "INSERT INTO accounts_user (is_superuser, password, username, email, is_staff, is_active, first_name, last_name, date_joined) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, current_timestamp);", false, user.HashedPassword, user.Username, user.Email, false, true, "", "")
+	if err != nil {
+		// Check for user constraints on database
+		if strings.Contains(err.Error(), "accounts_user_username_key") || strings.Contains(err.Error(), "unique-email") {
+			return errors.New("An user with that username or email address already exists")
+		}
+	}
 	return err
 }
 
