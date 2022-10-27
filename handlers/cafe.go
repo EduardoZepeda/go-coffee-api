@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/EduardoZepeda/go-coffee-api/application"
@@ -48,8 +47,7 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 		if searchTerm != "" {
 			cafes, err := app.Repo.SearchCoffeeShops(r.Context(), searchTerm, page, size)
 			if err != nil {
-				log.SetFlags(log.Ldate | log.Lshortfile)
-				log.Println(err)
+				app.Logger.Println(err)
 				app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
 				return
 			}
@@ -70,6 +68,7 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 		// List coffes in a default way
 		cafes, err := app.Repo.GetCoffeeShops(r.Context(), page, size)
 		if err != nil {
+			app.Logger.Println(err)
 			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
 			return
 		}
