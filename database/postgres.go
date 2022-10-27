@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
 	"github.com/jmoiron/sqlx"
@@ -29,6 +30,17 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 	}
 
 	db, err := sqlx.Connect("postgres", u.String())
+	if err != nil {
+		return nil, err
+	}
+	db.SetMaxOpenConns(200)  // The default is 0 (unlimited)
+	db.SetMaxIdleConns(10)   // defaultMaxIdleConns = 2
+	db.SetConnMaxLifetime(0) // 0, connections are reused forever.
+	// Return an error if opening the database takes longer than 5 seconds
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = db.PingContext(ctx)
 	if err != nil {
 		return nil, err
 	}

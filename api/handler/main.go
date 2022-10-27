@@ -15,14 +15,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-func init() {
-	repo, err := database.NewPostgresRepository()
-	if err != nil {
-		log.Fatal(err)
-	}
-	repository.SetRepository(repo)
-}
-
 // @title Coffee Shops in Gdl API
 // @version 1.0
 // @description This API returns information about speciality coffee shops in Guadalajara, Mexico.
@@ -34,12 +26,19 @@ func init() {
 // @host go-coffee-api.vercel.app
 // @BasePath /api/v1
 func Api(w http.ResponseWriter, r *http.Request) {
+	repo, err := database.NewPostgresRepository()
+	if err != nil {
+		log.Fatal(err)
+	}
+	repository.SetRepository(repo)
+	defer repo.Close()
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
-	api.Use(middleware.RecoverPanic)
-	api.Use(middleware.AuthenticatedOrReadOnly)
 	api.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	api.HandleFunc("/debug_next", handlers.SwaggerDocs).Methods(http.MethodGet)
+	api.Use(middleware.RecoverFromPanic)
+	api.Use(middleware.RateLimit)
+	api.Use(middleware.AuthenticatedOrReadOnly)
 	api.HandleFunc("/login", handlers.LoginUser).Methods(http.MethodPost)
 	api.HandleFunc("/user", handlers.RegisterUser).Methods(http.MethodPost)
 	api.HandleFunc("/user/{id:[0-9]+}", handlers.GetUser).Methods(http.MethodGet)

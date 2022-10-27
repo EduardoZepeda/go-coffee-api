@@ -7,7 +7,7 @@ import (
 	"github.com/EduardoZepeda/go-coffee-api/web"
 )
 
-func RecoverPanic(next http.Handler) http.Handler {
+func RecoverFromPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// This anonymous function will always run
 		defer func() {
