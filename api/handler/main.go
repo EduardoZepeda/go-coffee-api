@@ -38,7 +38,6 @@ func init() {
 func Api(w http.ResponseWriter, r *http.Request) {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
-	defer app.Repo.Close()
 	api.Use(middleware.RecoverFromPanic(app))
 	api.Use(middleware.RateLimit(app))
 	api.Use(middleware.AuthenticatedOrReadOnly(app))
