@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/EduardoZepeda/go-coffee-api/web"
+	"github.com/EduardoZepeda/go-coffee-api/application"
 )
 
 type DebugNext struct {
@@ -12,8 +12,10 @@ type DebugNext struct {
 	Matches []string
 }
 
-func SwaggerDocs(w http.ResponseWriter, r *http.Request) {
-	re := regexp.MustCompile(`^(.*/)([^?].*)?[?|.]*$`)
-	matches := re.FindStringSubmatch(r.RequestURI)
-	web.Respond(w, DebugNext{Uri: r.RequestURI, Matches: matches}, http.StatusOK)
+func SwaggerDocs(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		re := regexp.MustCompile(`^(.*/)([^?].*)?[?|.]*$`)
+		matches := re.FindStringSubmatch(r.RequestURI)
+		app.Respond(w, DebugNext{Uri: r.RequestURI, Matches: matches}, http.StatusOK)
+	}
 }

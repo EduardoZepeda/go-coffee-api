@@ -6,13 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/EduardoZepeda/go-coffee-api/application"
 	"github.com/EduardoZepeda/go-coffee-api/models"
 	"github.com/EduardoZepeda/go-coffee-api/parameters"
-	"github.com/EduardoZepeda/go-coffee-api/repository"
 	"github.com/EduardoZepeda/go-coffee-api/types"
 	"github.com/EduardoZepeda/go-coffee-api/validator"
 
-	"github.com/EduardoZepeda/go-coffee-api/web"
 	"github.com/gorilla/mux"
 )
 
@@ -31,58 +30,57 @@ import (
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes [get]
-func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
-	var err error
-	page, err := parameters.GetIntParam(r, "page", 0)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
-		return
-	}
-	size, err := parameters.GetIntParam(r, "size", 10)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
-		return
-	}
-	// If there is search term parameter
-	searchTerm := parameters.GetStringParam(r, "search", "")
-	if searchTerm != "" {
-		cafes, err := repository.SearchCoffeeShops(r.Context(), searchTerm, page, size)
+func GetCoffeeShops(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		page, err := parameters.GetIntParam(r, "page", 0)
 		if err != nil {
-			log.SetFlags(log.Ldate | log.Lshortfile)
-			log.Println(err)
-			web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusBadRequest)
 			return
 		}
-		web.Respond(w, cafes, http.StatusOK)
-		return
-	}
-	// if there is latitude and longitude in parameters
-	userCoordinates, err := parameters.GetLongitudeAndLatitudeTerms(r)
-	if userCoordinates != nil && err == nil {
-		cafes, err := repository.GetNearestCoffeeShop(r.Context(), userCoordinates)
+		size, err := parameters.GetIntParam(r, "size", 10)
 		if err != nil {
-			log.SetFlags(log.Ldate | log.Lshortfile)
-			log.Println(err)
-			web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusBadRequest)
 			return
 		}
-		web.Respond(w, cafes, http.StatusOK)
+		// If there is search term parameter
+		searchTerm := parameters.GetStringParam(r, "search", "")
+		if searchTerm != "" {
+			cafes, err := app.Repo.SearchCoffeeShops(r.Context(), searchTerm, page, size)
+			if err != nil {
+				log.SetFlags(log.Ldate | log.Lshortfile)
+				log.Println(err)
+				app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+				return
+			}
+			app.Respond(w, cafes, http.StatusOK)
+			return
+		}
+		// if there is latitude and longitude in parameters
+		userCoordinates, err := parameters.GetLongitudeAndLatitudeTerms(r)
+		if userCoordinates != nil && err == nil {
+			cafes, err := app.Repo.GetNearestCoffeeShop(r.Context(), userCoordinates)
+			if err != nil {
+				app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+				return
+			}
+			app.Respond(w, cafes, http.StatusOK)
+			return
+		}
+		// List coffes in a default way
+		cafes, err := app.Repo.GetCoffeeShops(r.Context(), page, size)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
+		if len(cafes) == 0 {
+			// if query returns nothing return 404 and []
+			app.Respond(w, []int{}, http.StatusNotFound)
+			return
+		}
+		app.Respond(w, cafes, http.StatusOK)
 		return
 	}
-	// List coffes in a default way
-	cafes, err := repository.GetCoffeeShops(r.Context(), page, size)
-	if err != nil {
-		log.SetFlags(log.Ldate | log.Lshortfile)
-		log.Println(err)
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
-	}
-	if len(cafes) == 0 {
-		// if query returns nothing return 404 and []
-		web.Respond(w, []int{}, http.StatusNotFound)
-		return
-	}
-	web.Respond(w, cafes, http.StatusOK)
 }
 
 // GetCoffeeShopById godoc
@@ -96,18 +94,20 @@ func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes/{id} [get]
-func GetCoffeeShopById(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	cafe, err := repository.GetCoffeeShopById(r.Context(), params["id"])
-	switch err {
-	case nil:
-		web.Respond(w, cafe, http.StatusOK)
-	case sql.ErrNoRows:
-		web.Respond(w, struct{}{}, http.StatusNotFound)
-		return
-	default:
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
+func GetCoffeeShopById(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		cafe, err := app.Repo.GetCoffeeShopById(r.Context(), params["id"])
+		switch err {
+		case nil:
+			app.Respond(w, cafe, http.StatusOK)
+		case sql.ErrNoRows:
+			app.Respond(w, struct{}{}, http.StatusNotFound)
+			return
+		default:
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
@@ -123,27 +123,29 @@ func GetCoffeeShopById(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes [post]
-func CreateCoffeeShop(w http.ResponseWriter, r *http.Request) {
-	var coffeeShop = models.CoffeeShop{}
-	decoder := json.NewDecoder(r.Body)
-	// If the JSON in the body has other fields not included in the struct from the parameter, returns an error.
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&coffeeShop); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid JSON syntax in body request."}, http.StatusBadRequest)
+func CreateCoffeeShop(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var coffeeShop = models.CoffeeShop{}
+		decoder := json.NewDecoder(r.Body)
+		// If the JSON in the body has other fields not included in the struct from the parameter, returns an error.
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&coffeeShop); err != nil {
+			app.Respond(w, types.ApiError{Message: "Invalid JSON syntax in body request."}, http.StatusBadRequest)
+			return
+		}
+		v := validator.New()
+		if validator.ValidateCoffeeShop(v, &coffeeShop); !v.Valid() {
+			app.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
+			return
+		}
+		err := app.Repo.CreateCoffeeShop(r.Context(), &coffeeShop)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
+		app.Respond(w, coffeeShop, http.StatusCreated)
 		return
 	}
-	v := validator.New()
-	if validator.ValidateCoffeeShop(v, &coffeeShop); !v.Valid() {
-		web.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
-		return
-	}
-	err := repository.CreateCoffeeShop(r.Context(), &coffeeShop)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
-	}
-	web.Respond(w, coffeeShop, http.StatusCreated)
-	return
 }
 
 // UpdateCoffeeShop godoc
@@ -158,27 +160,29 @@ func CreateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes/{id} [put]
-func UpdateCoffeeShop(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	var coffeeShop = models.CoffeeShop{}
-	coffeeShop.ID = params["id"]
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&coffeeShop); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid JSON syntax in body request."}, http.StatusBadRequest)
-		return
+func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		var coffeeShop = models.CoffeeShop{}
+		coffeeShop.ID = params["id"]
+		decoder := json.NewDecoder(r.Body)
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&coffeeShop); err != nil {
+			app.Respond(w, types.ApiError{Message: "Invalid JSON syntax in body request."}, http.StatusBadRequest)
+			return
+		}
+		v := validator.New()
+		if validator.ValidateCoffeeShop(v, &coffeeShop); !v.Valid() {
+			app.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
+			return
+		}
+		err := app.Repo.UpdateCoffeeShop(r.Context(), &coffeeShop)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
+		app.Respond(w, &coffeeShop, http.StatusOK)
 	}
-	v := validator.New()
-	if validator.ValidateCoffeeShop(v, &coffeeShop); !v.Valid() {
-		web.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
-		return
-	}
-	err := repository.UpdateCoffeeShop(r.Context(), &coffeeShop)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
-	}
-	web.Respond(w, &coffeeShop, http.StatusOK)
 }
 
 // DeleteCoffeeShop godoc
@@ -191,14 +195,16 @@ func UpdateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 // @Success      204  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /cafes/{id} [delete]
-func DeleteCoffeeShop(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	err := repository.DeleteCoffeeShop(r.Context(), params["id"])
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
+func DeleteCoffeeShop(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		err := app.Repo.DeleteCoffeeShop(r.Context(), params["id"])
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
+		app.Respond(w, struct{}{}, http.StatusNoContent)
 	}
-	web.Respond(w, struct{}{}, http.StatusNoContent)
 }
 
 // SearchCoffeeShops godoc
@@ -215,30 +221,32 @@ func DeleteCoffeeShop(w http.ResponseWriter, r *http.Request) {
 // @Failure      500  {object}  types.ApiError
 // @Failure      404  {object}  []models.EmptyBody
 // @Router       /cafes/search/{searchTerm} [get]
-func SearchCoffeeShops(w http.ResponseWriter, r *http.Request) {
-	var err error
-	params := mux.Vars(r)
-	page, err := parameters.GetIntParam(r, "page", 0)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
-		return
+func SearchCoffeeShops(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		params := mux.Vars(r)
+		page, err := parameters.GetIntParam(r, "page", 0)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusBadRequest)
+			return
+		}
+		size, err := parameters.GetIntParam(r, "size", 10)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusBadRequest)
+			return
+		}
+		cafes, err := app.Repo.SearchCoffeeShops(r.Context(), params["searchTerm"], page, size)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
+		if len(cafes) == 0 {
+			// if query returns nothing return 404 and []
+			app.Respond(w, []int{}, http.StatusNotFound)
+			return
+		}
+		app.Respond(w, cafes, http.StatusOK)
 	}
-	size, err := parameters.GetIntParam(r, "size", 10)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
-		return
-	}
-	cafes, err := repository.SearchCoffeeShops(r.Context(), params["searchTerm"], page, size)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
-	}
-	if len(cafes) == 0 {
-		// if query returns nothing return 404 and []
-		web.Respond(w, []int{}, http.StatusNotFound)
-		return
-	}
-	web.Respond(w, cafes, http.StatusOK)
 }
 
 // NearestCafe godoc
@@ -253,23 +261,25 @@ func SearchCoffeeShops(w http.ResponseWriter, r *http.Request) {
 // @Failure      500  {object}  types.ApiError
 // @Failure      404  {object}  []models.EmptyBody
 // @Router       /cafes/nearest [post]
-func GetNearestCoffeeShop(w http.ResponseWriter, r *http.Request) {
-	var userCoordinates = models.UserCoordinates{}
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&userCoordinates); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
-		return
+func GetNearestCoffeeShop(app *application.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var userCoordinates = models.UserCoordinates{}
+		decoder := json.NewDecoder(r.Body)
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&userCoordinates); err != nil {
+			app.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
+			return
+		}
+		cafes, err := app.Repo.GetNearestCoffeeShop(r.Context(), &userCoordinates)
+		if err != nil {
+			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+			return
+		}
+		if len(cafes) == 0 {
+			// if query returns nothing return 404 and []
+			app.Respond(w, []int{}, http.StatusNotFound)
+			return
+		}
+		app.Respond(w, cafes, http.StatusOK)
 	}
-	cafes, err := repository.GetNearestCoffeeShop(r.Context(), &userCoordinates)
-	if err != nil {
-		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-		return
-	}
-	if len(cafes) == 0 {
-		// if query returns nothing return 404 and []
-		web.Respond(w, []int{}, http.StatusNotFound)
-		return
-	}
-	web.Respond(w, cafes, http.StatusOK)
 }
