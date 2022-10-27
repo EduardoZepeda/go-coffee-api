@@ -12,7 +12,7 @@ export default function App() {
       <Container sx={{ display: 'flex', flexDirection:'column',  justifyContent: 'center', alignItems: 'center', height: '100%' }}>
       <CssBaseline />
       <Box sx={{textAlign: 'center'}}>
-      <img srcset="cup-360w.png 360w,
+      <img srcSet="cup-360w.png 360w,
              cup-180w.png 180w"
            sizes="(max-width: 480px) 180px,
                   360px"
