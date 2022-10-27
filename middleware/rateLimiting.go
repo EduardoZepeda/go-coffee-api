@@ -38,11 +38,12 @@ func RateLimit(next http.Handler) http.Handler {
 	}()
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ip, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+		parsedIp := net.ParseIP(r.RemoteAddr)
+		if parsedIp == nil {
+			web.Respond(w, types.ApiError{Message: "Couldn't parse your ip address"}, http.StatusInternalServerError)
 			return
 		}
+		ip := parsedIp.String()
 		mu.Lock()
 
 		if _, found := clients[ip]; !found {
