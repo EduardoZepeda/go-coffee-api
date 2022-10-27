@@ -87,7 +87,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Cast userId as String
-	followRequest.UserFromId = userId
+	followRequest.UserFromId = userId.(string)
 	err = repository.FollowUser(r.Context(), &followRequest)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
@@ -109,20 +109,17 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 // @Failure      500  {object}  types.ApiError
 // @Router       /following [delete]
 func UnfollowUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 	var unfollowRequest = models.FollowUnfollowRequest{}
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&unfollowRequest); err != nil {
-		web.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
-		return
-	}
 	userId, err := utils.GetDataFromToken(r, "userId")
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
 		return
 	}
 	// Cast userId as String
-	unfollowRequest.UserFromId = userId
+	unfollowRequest.UserFromId = userId.(string)
+	// Obtain UserToId from url path
+	unfollowRequest.UserToId = params["id"]
 	err = repository.UnfollowUser(r.Context(), &unfollowRequest)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)

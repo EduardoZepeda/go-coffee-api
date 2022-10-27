@@ -957,10 +957,7 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "created_date": {
-                    "type": "string"
-                },
-                "id": {
+                "city": {
                     "type": "string"
                 },
                 "location": {
@@ -969,14 +966,14 @@ const docTemplate = `{
                         "type": "number"
                     }
                 },
-                "modified_date": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
                 "rating": {
                     "type": "number"
+                },
+                "roaster": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1007,6 +1004,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "isStaff": {
                     "type": "string"
                 },
                 "lastName": {

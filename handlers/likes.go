@@ -43,7 +43,7 @@ func GetLikedCoffeeShops(w http.ResponseWriter, r *http.Request) {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 		return
 	}
-	userId := parameters.GetStringParam(r, "user", currentUserId)
+	userId := parameters.GetStringParam(r, "user", currentUserId.(string))
 	likesByUser := models.LikesByUserRequest{Size: size, Page: page, UserId: userId}
 	// If there is search term parameter
 	shops, err := repository.GetLikedCoffeeShops(r.Context(), &likesByUser)
@@ -84,7 +84,7 @@ func LikeCoffeeShop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Cast userId as String
-	LikeRequest.UserId = userId
+	LikeRequest.UserId = userId.(string)
 	err = repository.LikeCoffeeShop(r.Context(), &LikeRequest)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
@@ -113,7 +113,7 @@ func UnlikeCoffeeShop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Cast userId as String
-	var unLikeRequest = models.LikeUnlikeCoffeeShopRequest{UserId: userId, ShopId: params["shop_id"]}
+	var unLikeRequest = models.LikeUnlikeCoffeeShopRequest{UserId: userId.(string), ShopId: params["shop_id"]}
 	err = repository.UnlikeCoffeeShop(r.Context(), &unLikeRequest)
 	if err != nil {
 		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)

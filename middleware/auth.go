@@ -66,3 +66,22 @@ func AuthenticatedOrReadOnly(next http.Handler) http.Handler {
 	})
 
 }
+
+func IsStaffOrReadOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if methodIsSafe(r.Method) || IsLoginOrRegisterAttempt(r.URL.Path) {
+			next.ServeHTTP(w, r)
+			return
+		}
+		isStaff, err := utils.GetDataFromToken(r, "isStaff")
+		if err != nil {
+			web.Respond(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		if !isStaff.(bool) {
+			web.Respond(w, "You don't have permission to access this view", http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}

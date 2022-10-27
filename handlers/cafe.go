@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/EduardoZepeda/go-coffee-api/models"
@@ -47,7 +48,9 @@ func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	if searchTerm != "" {
 		cafes, err := repository.SearchCoffeeShops(r.Context(), searchTerm, page, size)
 		if err != nil {
-			web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+			log.SetFlags(log.Ldate | log.Lshortfile)
+			log.Println(err)
+			web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}
 		web.Respond(w, cafes, http.StatusOK)
@@ -58,7 +61,9 @@ func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	if userCoordinates != nil && err == nil {
 		cafes, err := repository.GetNearestCoffeeShop(r.Context(), userCoordinates)
 		if err != nil {
-			web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+			log.SetFlags(log.Ldate | log.Lshortfile)
+			log.Println(err)
+			web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}
 		web.Respond(w, cafes, http.StatusOK)
@@ -67,7 +72,9 @@ func GetCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	// List coffes in a default way
 	cafes, err := repository.GetCoffeeShops(r.Context(), page, size)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		log.SetFlags(log.Ldate | log.Lshortfile)
+		log.Println(err)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	if len(cafes) == 0 {
@@ -132,7 +139,7 @@ func CreateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	}
 	err := repository.CreateCoffeeShop(r.Context(), &coffeeShop)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, coffeeShop, http.StatusCreated)
@@ -168,7 +175,7 @@ func UpdateCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	}
 	err := repository.UpdateCoffeeShop(r.Context(), &coffeeShop)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, &coffeeShop, http.StatusOK)
@@ -188,7 +195,7 @@ func DeleteCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	err := repository.DeleteCoffeeShop(r.Context(), params["id"])
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	web.Respond(w, struct{}{}, http.StatusNoContent)
@@ -223,7 +230,7 @@ func SearchCoffeeShops(w http.ResponseWriter, r *http.Request) {
 	}
 	cafes, err := repository.SearchCoffeeShops(r.Context(), params["searchTerm"], page, size)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	if len(cafes) == 0 {
@@ -256,7 +263,7 @@ func GetNearestCoffeeShop(w http.ResponseWriter, r *http.Request) {
 	}
 	cafes, err := repository.GetNearestCoffeeShop(r.Context(), &userCoordinates)
 	if err != nil {
-		web.Respond(w, types.ApiError{Message: "Something went wrong in the server"}, http.StatusInternalServerError)
+		web.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 		return
 	}
 	if len(cafes) == 0 {

@@ -37,7 +37,7 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 
 func (repo *PostgresRepository) GetCoffeeShops(ctx context.Context, page uint64, size uint64) ([]*models.CoffeeShop, error) {
 	var shops []*models.CoffeeShop
-	err := repo.db.SelectContext(ctx, &shops, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY name DESC LIMIT $1 OFFSET $2;", size, page*size)
+	err := repo.db.SelectContext(ctx, &shops, "SELECT id, name, location, address, roaster, city, rating, created_date, modified_date FROM shops_shop ORDER BY created_date DESC LIMIT $1 OFFSET $2;", size, page*size)
 	return shops, err
 }
 
@@ -48,12 +48,12 @@ func (repo *PostgresRepository) GetCoffeeShopById(ctx context.Context, id string
 }
 
 func (repo *PostgresRepository) CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
-	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO shops_shop (name, location, address, rating) VALUES (:Name, :Location, :Address, :Rating);", shopRequest)
+	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO shops_shop (name, location, city, roaster, address, rating, created_date, modified_date) VALUES (:name, :location, :city, :roaster, :address, :rating, current_timestamp, current_timestamp);", shopRequest)
 	return err
 }
 
 func (repo *PostgresRepository) UpdateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
-	_, err := repo.db.NamedExecContext(ctx, "UPDATE shops_shop SET name = :Name, location = :Location, address = :Address, rating = :Rating WHERE id = :ID;", shopRequest)
+	_, err := repo.db.NamedExecContext(ctx, "UPDATE shops_shop SET name = :name, location = :location, address = :address, rating = :rating, roaster = :roaster, modified_date = current_timestamp WHERE id = :id;", shopRequest)
 	return err
 }
 
@@ -111,6 +111,12 @@ func (repo *PostgresRepository) DeleteUser(ctx context.Context, id string) error
 
 func (repo *PostgresRepository) FollowUser(ctx context.Context, followUnfollowUserRequest *models.FollowUnfollowRequest) error {
 	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO accounts_contact (created, user_from_id, user_to_id) VALUES (current_timestamp, :UserFromId, :UserToId);", followUnfollowUserRequest)
+	if err != nil {
+		// Check for user constraints on database
+		if strings.Contains(err.Error(), "userTo-userFrom") {
+			return errors.New("You are already following this user")
+		}
+	}
 	return err
 }
 
@@ -133,7 +139,7 @@ func (repo *PostgresRepository) GetUserFollowers(ctx context.Context, userId str
 
 func (repo *PostgresRepository) GetLikedCoffeeShops(ctx context.Context, likes *models.LikesByUserRequest) ([]*models.CoffeeShop, error) {
 	var coffeeShops []*models.CoffeeShop
-	err := repo.db.SelectContext(ctx, &coffeeShops, "SELECT shops_shop.id, name, location, address, rating, created_date, modified_date FROM shops_shop INNER JOIN shops_shop_likes ON shops_shop_likes.shop_id = shops_shop.id WHERE shops_shop_likes.user_id = $1 LIMIT $2 OFFSET $3;", likes.UserId, likes.Size, likes.Size*likes.Page)
+	err := repo.db.SelectContext(ctx, &coffeeShops, "SELECT shops_shop.id, name, location, address, rating, city, roaster, created_date, modified_date FROM shops_shop INNER JOIN shops_shop_likes ON shops_shop_likes.shop_id = shops_shop.id WHERE shops_shop_likes.user_id = $1 LIMIT $2 OFFSET $3;", likes.UserId, likes.Size, likes.Size*likes.Page)
 	return coffeeShops, err
 }
 
