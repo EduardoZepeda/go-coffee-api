@@ -1,14 +1,13 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/EduardoZepeda/go-coffee-api/application"
-	"github.com/EduardoZepeda/go-coffee-api/models"
+	"github.com/EduardoZepeda/go-coffee-api/types"
 	"github.com/EduardoZepeda/go-coffee-api/utils"
-	"github.com/golang-jwt/jwt/v4"
 )
 
 var (
@@ -29,15 +28,14 @@ func methodIsSafe(method string) bool {
 
 var (
 	NO_AUTH_NEEDED = []string{
-		"login",
-		"user",
-		"cafes/nearest",
+		"/api/v1/login",
+		"/api/v1/signup",
 	}
 )
 
 func IsLoginOrRegisterAttempt(route string) bool {
 	for _, p := range NO_AUTH_NEEDED {
-		if strings.Contains(route, p) {
+		if strings.HasPrefix(route, p) {
 			return true
 		}
 	}
@@ -51,20 +49,14 @@ func AuthenticatedOrReadOnly(app *application.App) func(h http.Handler) http.Han
 				next.ServeHTTP(w, r)
 				return
 			}
-			tokenString, err := utils.GetTokenFromAuthHeader(r)
+			userId, err := utils.GetDataFromToken(r, "userId")
 			if err != nil {
-				app.Logger.Println(err)
-				app.Respond(w, "There was an error with your Authorization Token", http.StatusBadRequest)
+				app.Logger.Println(err.Error())
+				app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 				return
 			}
-			_, err = jwt.ParseWithClaims(tokenString, &models.AppClaims{}, func(token *jwt.Token) (interface{}, error) {
-				return []byte(os.Getenv("JWT_SECRET")), nil
-			})
-			if err != nil {
-				app.Respond(w, "You must be authenticated to access this view", http.StatusUnauthorized)
-				return
-			}
-			next.ServeHTTP(w, r)
+			ctx := context.WithValue(r.Context(), "userId", userId)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
@@ -78,14 +70,28 @@ func IsStaffOrReadOnly(app *application.App) func(h http.Handler) http.Handler {
 			isStaff, err := utils.GetDataFromToken(r, "isStaff")
 			if err != nil {
 				app.Logger.Println(err)
-				app.Respond(w, "There was an error getting data from your token", http.StatusUnauthorized)
+				app.Respond(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 			if !isStaff.(bool) {
-				app.Respond(w, "You don't have permission to access this view", http.StatusUnauthorized)
+				app.Respond(w, types.ApiError{Message: "You don't have permission to access this view"}, http.StatusUnauthorized)
 				return
 			}
 			next.ServeHTTP(w, r)
+		})
+	}
+}
+func AuthenticatedOnly(app *application.App) func(h http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			userId, err := utils.GetDataFromToken(r, "userId")
+			if err != nil {
+				app.Logger.Println(err)
+				app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
+				return
+			}
+			ctx := context.WithValue(r.Context(), "userId", userId)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
