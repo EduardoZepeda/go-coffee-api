@@ -93,13 +93,6 @@ definitions:
       username:
         type: string
     type: object
-  models.UserCoordinates:
-    properties:
-      latitude:
-        type: number
-      longitude:
-        type: number
-    type: object
   types.ApiError:
     properties:
       errors:
@@ -203,7 +196,7 @@ paths:
       summary: Create a new coffee shop
       tags:
       - coffee shops
-  /coffee-shops/{id}:
+  /coffee-shops/{coffee_shop_id}:
     delete:
       consumes:
       - application/json
@@ -289,94 +282,6 @@ paths:
       summary: Update a coffee shop
       tags:
       - coffee shops
-  /coffee-shops/nearest:
-    post:
-      consumes:
-      - application/json
-      description: Get a list of the user nearest coffee shops in Guadalajara, ordered
-        by distance. It needs user's latitude and longitude as float numbers. Treated
-        as POST to prevent third parties saving users' location into databases.
-      parameters:
-      - description: User coordinates (latitude, longitude) in JSON
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.UserCoordinates'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.CoffeeShop'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ApiError'
-        "404":
-          description: Not Found
-          schema:
-            items:
-              $ref: '#/definitions/models.EmptyBody'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ApiError'
-      summary: Get a list of the nearest coffee shops
-      tags:
-      - coffee shops
-      - search
-  /coffee-shops/search/{searchTerm}:
-    get:
-      consumes:
-      - application/json
-      description: Search coffee shops by a given word, default number of results
-        are 10
-      parameters:
-      - description: Search term
-        in: path
-        name: searchTerm
-        required: true
-        type: string
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Size number
-        in: query
-        name: size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.CoffeeShop'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ApiError'
-        "404":
-          description: Not Found
-          schema:
-            items:
-              $ref: '#/definitions/models.EmptyBody'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ApiError'
-      summary: Search coffee shops by a given word
-      tags:
-      - coffee shops
-      - search
   /feed:
     get:
       consumes:

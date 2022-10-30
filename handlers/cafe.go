@@ -102,7 +102,7 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /coffee-shops/{id} [get]
+// @Router       /coffee-shops/{coffee_shop_id} [get]
 func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -168,7 +168,7 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /coffee-shops/{id} [put]
+// @Router       /coffee-shops/{coffee_shop_id} [put]
 func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -203,7 +203,7 @@ func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Param id path string true "Coffee Shop ID"
 // @Success      204  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
-// @Router       /coffee-shops/{id} [delete]
+// @Router       /coffee-shops/{coffee_shop_id} [delete]
 func DeleteCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -213,82 +213,5 @@ func DeleteCoffeeShop(app *application.App) http.HandlerFunc {
 			return
 		}
 		app.Respond(w, struct{}{}, http.StatusNoContent)
-	}
-}
-
-// SearchCoffeeShops godoc
-// @Summary      Search coffee shops by a given word
-// @Description  Search coffee shops by a given word, default number of results are 10
-// @Tags         coffee shops, search
-// @Accept       json
-// @Produce      json
-// @Param searchTerm path string true "Search term"
-// @Param page query int false "Page number"
-// @Param size query int false "Size number"
-// @Success      200 {array}  models.CoffeeShop
-// @Failure      400  {object}  types.ApiError
-// @Failure      500  {object}  types.ApiError
-// @Failure      404  {object}  []models.EmptyBody
-// @Router       /coffee-shops/search/{searchTerm} [get]
-func SearchCoffeeShops(app *application.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		params := mux.Vars(r)
-		page, err := parameters.GetIntParam(r, "page", 0)
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusBadRequest)
-			return
-		}
-		size, err := parameters.GetIntParam(r, "size", 10)
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusBadRequest)
-			return
-		}
-		cafes, err := app.Repo.SearchCoffeeShops(r.Context(), params["searchTerm"], page, size)
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
-			return
-		}
-		if len(cafes) == 0 {
-			// if query returns nothing return 404 and []
-			app.Respond(w, []int{}, http.StatusNotFound)
-			return
-		}
-		app.Respond(w, cafes, http.StatusOK)
-	}
-}
-
-// NearestCafe godoc
-// @Summary      Get a list of the nearest coffee shops
-// @Description  Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties saving users' location into databases.
-// @Tags         coffee shops,search
-// @Accept       json
-// @Produce      json
-// @Param request body models.UserCoordinates true "User coordinates (latitude, longitude) in JSON"
-// @Success      200 {array}  models.CoffeeShop
-// @Failure      400  {object}  types.ApiError
-// @Failure      500  {object}  types.ApiError
-// @Failure      404  {object}  []models.EmptyBody
-// @Router       /coffee-shops/nearest [post]
-func GetNearestCoffeeShop(app *application.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var userCoordinates = models.UserCoordinates{}
-		decoder := json.NewDecoder(r.Body)
-		decoder.DisallowUnknownFields()
-		if err := decoder.Decode(&userCoordinates); err != nil {
-			app.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must a longitude and a latitude. For example: {'latitude': -103.3668161, 'longitude': 20.6708447}"}, http.StatusBadRequest)
-			return
-		}
-		cafes, err := app.Repo.GetNearestCoffeeShop(r.Context(), &userCoordinates)
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
-			return
-		}
-		if len(cafes) == 0 {
-			// if query returns nothing return 404 and []
-			app.Respond(w, []int{}, http.StatusNotFound)
-			return
-		}
-		app.Respond(w, cafes, http.StatusOK)
 	}
 }
