@@ -19,6 +19,15 @@ definitions:
     type: object
   models.EmptyBody:
     type: object
+  models.Feed:
+    properties:
+      object:
+        type: string
+      user:
+        type: string
+      verb:
+        type: string
+    type: object
   models.FollowUnfollowRequest:
     properties:
       userFromId:
@@ -114,7 +123,7 @@ info:
   title: Coffee Shops in Gdl API
   version: "1.0"
 paths:
-  /cafes:
+  /coffee-shops:
     get:
       consumes:
       - application/json
@@ -160,7 +169,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get a list of coffee shops
       tags:
-      - coffee shop
+      - coffee shops
     post:
       consumes:
       - application/json
@@ -193,8 +202,8 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Create a new coffee shop
       tags:
-      - coffee shop
-  /cafes/{id}:
+      - coffee shops
+  /coffee-shops/{id}:
     delete:
       consumes:
       - application/json
@@ -218,7 +227,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Delete a coffee shop
       tags:
-      - coffee shop
+      - coffee shops
     get:
       consumes:
       - application/json
@@ -246,7 +255,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get a coffee shop by its id
       tags:
-      - coffee shop
+      - coffee shops
     put:
       consumes:
       - application/json
@@ -279,8 +288,8 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Update a coffee shop
       tags:
-      - coffee shop
-  /cafes/nearest:
+      - coffee shops
+  /coffee-shops/nearest:
     post:
       consumes:
       - application/json
@@ -319,9 +328,9 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get a list of the nearest coffee shops
       tags:
-      - coffee shop
+      - coffee shops
       - search
-  /cafes/search/{searchTerm}:
+  /coffee-shops/search/{searchTerm}:
     get:
       consumes:
       - application/json
@@ -366,9 +375,35 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Search coffee shops by a given word
       tags:
-      - coffee shop
+      - coffee shops
       - search
-  /followers/{id}:
+  /feed:
+    get:
+      consumes:
+      - application/json
+      description: This route returns the user's last ten feed items. Each item consists
+        of a subject, an action and a destinatary
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Feed'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: The active user's feed
+      tags:
+      - feed
+  /followers/{user_id}:
     get:
       consumes:
       - application/json
@@ -394,37 +429,8 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Return user's followers,
       tags:
-      - follow
+      - follows
   /following:
-    delete:
-      consumes:
-      - application/json
-      description: Unfollow a user account using its id
-      parameters:
-      - description: Unfollow a user account
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.FollowUnfollowRequest'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-          schema:
-            $ref: '#/definitions/models.FollowUnfollowRequest'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ApiError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ApiError'
-      summary: Unfollow user,
-      tags:
-      - follow
     post:
       consumes:
       - application/json
@@ -453,8 +459,37 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Follow user,
       tags:
-      - follow
-  /following/{id}:
+      - follows
+  /following/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Unfollow a user account using its id
+      parameters:
+      - description: Unfollow a user account
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.FollowUnfollowRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.FollowUnfollowRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Unfollow user,
+      tags:
+      - follows
     get:
       consumes:
       - application/json
@@ -480,37 +515,8 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Return following users,
       tags:
-      - follow
+      - follows
   /likes:
-    delete:
-      consumes:
-      - application/json
-      description: Unlike a coffee shop
-      parameters:
-      - description: Unlike a coffee shop
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/types.ApiError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/types.ApiError'
-      summary: Unlike a coffee shop
-      tags:
-      - likes
     get:
       consumes:
       - application/json
@@ -577,6 +583,36 @@ paths:
       summary: Like a coffee shop
       tags:
       - likes
+  /likes/{coffee_shop_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Unlike a coffee shop
+      parameters:
+      - description: Unlike a coffee shop
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Unlike a coffee shop
+      tags:
+      - likes
   /login:
     post:
       consumes:
@@ -607,8 +643,8 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Login a user,
       tags:
-      - user
-  /user:
+      - users
+  /signup:
     post:
       consumes:
       - application/json
@@ -637,8 +673,8 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Register a new user,
       tags:
-      - user
-  /user/{id}:
+      - users
+  /user/{user_id}:
     delete:
       consumes:
       - application/json
@@ -666,7 +702,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Delete current user
       tags:
-      - user
+      - users
     get:
       consumes:
       - application/json
@@ -694,7 +730,7 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Get an user account data,
       tags:
-      - user
+      - users
     put:
       consumes:
       - application/json
@@ -728,5 +764,5 @@ paths:
             $ref: '#/definitions/types.ApiError'
       summary: Update current user,
       tags:
-      - user
+      - users
 swagger: "2.0"

@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/cafes": {
+        "/coffee-shops": {
             "get": {
                 "description": "Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
                 "consumes": [
@@ -34,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Get a list of coffee shops",
                 "parameters": [
@@ -102,7 +102,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Create a new coffee shop",
                 "parameters": [
@@ -144,7 +144,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cafes/nearest": {
+        "/coffee-shops/nearest": {
             "post": {
                 "description": "Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties saving users' location into databases.",
                 "consumes": [
@@ -154,7 +154,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop",
+                    "coffee shops",
                     "search"
                 ],
                 "summary": "Get a list of the nearest coffee shops",
@@ -203,7 +203,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cafes/search/{searchTerm}": {
+        "/coffee-shops/search/{searchTerm}": {
             "get": {
                 "description": "Search coffee shops by a given word, default number of results are 10",
                 "consumes": [
@@ -213,7 +213,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop",
+                    "coffee shops",
                     "search"
                 ],
                 "summary": "Search coffee shops by a given word",
@@ -272,7 +272,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cafes/{id}": {
+        "/coffee-shops/{id}": {
             "get": {
                 "description": "Get a specific coffee shop object. Id parameter must be an integer.",
                 "consumes": [
@@ -282,7 +282,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Get a coffee shop by its id",
                 "parameters": [
@@ -324,7 +324,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Update a coffee shop",
                 "parameters": [
@@ -374,7 +374,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Delete a coffee shop",
                 "parameters": [
@@ -402,7 +402,45 @@ const docTemplate = `{
                 }
             }
         },
-        "/followers/{id}": {
+        "/feed": {
+            "get": {
+                "description": "This route returns the user's last ten feed items. Each item consists of a subject, an action and a destinatary",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "The active user's feed",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Feed"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/followers/{user_id}": {
             "get": {
                 "description": "Return user's followers from a given user Id",
                 "consumes": [
@@ -412,7 +450,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "follow"
+                    "follows"
                 ],
                 "summary": "Return user's followers,",
                 "parameters": [
@@ -453,7 +491,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "follow"
+                    "follows"
                 ],
                 "summary": "Follow user,",
                 "parameters": [
@@ -487,6 +525,47 @@ const docTemplate = `{
                         }
                     }
                 }
+            }
+        },
+        "/following/{user_id}": {
+            "get": {
+                "description": "Return following users from a given user Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "follows"
+                ],
+                "summary": "Return following users,",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.GetUserResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
             },
             "delete": {
                 "description": "Unfollow a user account using its id",
@@ -497,7 +576,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "follow"
+                    "follows"
                 ],
                 "summary": "Unfollow user,",
                 "parameters": [
@@ -522,47 +601,6 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/types.ApiError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/types.ApiError"
-                        }
-                    }
-                }
-            }
-        },
-        "/following/{id}": {
-            "get": {
-                "description": "Return following users from a given user Id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "follow"
-                ],
-                "summary": "Return following users,",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.GetUserResponse"
-                            }
                         }
                     },
                     "500": {
@@ -674,7 +712,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/likes/{coffee_shop_id}": {
             "delete": {
                 "description": "Unlike a coffee shop",
                 "consumes": [
@@ -730,7 +770,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Login a user,",
                 "parameters": [
@@ -766,7 +806,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user": {
+        "/signup": {
             "post": {
                 "description": "Register a user using email, username, password and password confirmation",
                 "consumes": [
@@ -776,7 +816,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Register a new user,",
                 "parameters": [
@@ -812,7 +852,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{id}": {
+        "/user/{user_id}": {
             "get": {
                 "description": "Get id, username, email, first name, last name and bio from a user",
                 "consumes": [
@@ -822,7 +862,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Get an user account data,",
                 "parameters": [
@@ -864,7 +904,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Update current user,",
                 "parameters": [
@@ -915,7 +955,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Delete current user",
                 "parameters": [
@@ -979,6 +1019,20 @@ const docTemplate = `{
         },
         "models.EmptyBody": {
             "type": "object"
+        },
+        "models.Feed": {
+            "type": "object",
+            "properties": {
+                "object": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                },
+                "verb": {
+                    "type": "string"
+                }
+            }
         },
         "models.FollowUnfollowRequest": {
             "type": "object",

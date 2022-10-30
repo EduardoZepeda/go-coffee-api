@@ -17,7 +17,7 @@
     "host": "go-coffee-api.vercel.app",
     "basePath": "/api/v1",
     "paths": {
-        "/cafes": {
+        "/coffee-shops": {
             "get": {
                 "description": "Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
                 "consumes": [
@@ -27,7 +27,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Get a list of coffee shops",
                 "parameters": [
@@ -95,7 +95,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Create a new coffee shop",
                 "parameters": [
@@ -137,7 +137,7 @@
                 }
             }
         },
-        "/cafes/nearest": {
+        "/coffee-shops/nearest": {
             "post": {
                 "description": "Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties saving users' location into databases.",
                 "consumes": [
@@ -147,7 +147,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop",
+                    "coffee shops",
                     "search"
                 ],
                 "summary": "Get a list of the nearest coffee shops",
@@ -196,7 +196,7 @@
                 }
             }
         },
-        "/cafes/search/{searchTerm}": {
+        "/coffee-shops/search/{searchTerm}": {
             "get": {
                 "description": "Search coffee shops by a given word, default number of results are 10",
                 "consumes": [
@@ -206,7 +206,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop",
+                    "coffee shops",
                     "search"
                 ],
                 "summary": "Search coffee shops by a given word",
@@ -265,7 +265,7 @@
                 }
             }
         },
-        "/cafes/{id}": {
+        "/coffee-shops/{id}": {
             "get": {
                 "description": "Get a specific coffee shop object. Id parameter must be an integer.",
                 "consumes": [
@@ -275,7 +275,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Get a coffee shop by its id",
                 "parameters": [
@@ -317,7 +317,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Update a coffee shop",
                 "parameters": [
@@ -367,7 +367,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "coffee shop"
+                    "coffee shops"
                 ],
                 "summary": "Delete a coffee shop",
                 "parameters": [
@@ -395,7 +395,45 @@
                 }
             }
         },
-        "/followers/{id}": {
+        "/feed": {
+            "get": {
+                "description": "This route returns the user's last ten feed items. Each item consists of a subject, an action and a destinatary",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feed"
+                ],
+                "summary": "The active user's feed",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Feed"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/followers/{user_id}": {
             "get": {
                 "description": "Return user's followers from a given user Id",
                 "consumes": [
@@ -405,7 +443,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "follow"
+                    "follows"
                 ],
                 "summary": "Return user's followers,",
                 "parameters": [
@@ -446,7 +484,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "follow"
+                    "follows"
                 ],
                 "summary": "Follow user,",
                 "parameters": [
@@ -480,6 +518,47 @@
                         }
                     }
                 }
+            }
+        },
+        "/following/{user_id}": {
+            "get": {
+                "description": "Return following users from a given user Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "follows"
+                ],
+                "summary": "Return following users,",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.GetUserResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
             },
             "delete": {
                 "description": "Unfollow a user account using its id",
@@ -490,7 +569,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "follow"
+                    "follows"
                 ],
                 "summary": "Unfollow user,",
                 "parameters": [
@@ -515,47 +594,6 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/types.ApiError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/types.ApiError"
-                        }
-                    }
-                }
-            }
-        },
-        "/following/{id}": {
-            "get": {
-                "description": "Return following users from a given user Id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "follow"
-                ],
-                "summary": "Return following users,",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.GetUserResponse"
-                            }
                         }
                     },
                     "500": {
@@ -667,7 +705,9 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/likes/{coffee_shop_id}": {
             "delete": {
                 "description": "Unlike a coffee shop",
                 "consumes": [
@@ -723,7 +763,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Login a user,",
                 "parameters": [
@@ -759,7 +799,7 @@
                 }
             }
         },
-        "/user": {
+        "/signup": {
             "post": {
                 "description": "Register a user using email, username, password and password confirmation",
                 "consumes": [
@@ -769,7 +809,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Register a new user,",
                 "parameters": [
@@ -805,7 +845,7 @@
                 }
             }
         },
-        "/user/{id}": {
+        "/user/{user_id}": {
             "get": {
                 "description": "Get id, username, email, first name, last name and bio from a user",
                 "consumes": [
@@ -815,7 +855,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Get an user account data,",
                 "parameters": [
@@ -857,7 +897,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Update current user,",
                 "parameters": [
@@ -908,7 +948,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Delete current user",
                 "parameters": [
@@ -972,6 +1012,20 @@
         },
         "models.EmptyBody": {
             "type": "object"
+        },
+        "models.Feed": {
+            "type": "object",
+            "properties": {
+                "object": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                },
+                "verb": {
+                    "type": "string"
+                }
+            }
         },
         "models.FollowUnfollowRequest": {
             "type": "object",
