@@ -80,14 +80,11 @@ func LikeCoffeeShop(app *application.App) http.HandlerFunc {
 			app.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 			return
 		}
-		userId, err := utils.GetDataFromToken(r, "userId")
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
-			return
-		}
+		ctx := r.Context()
+		userId := ctx.Value("userId")
 		// Cast userId as String
 		LikeRequest.UserId = userId.(string)
-		err = app.Repo.LikeCoffeeShop(r.Context(), &LikeRequest)
+		err := app.Repo.LikeCoffeeShop(ctx, &LikeRequest)
 		if err != nil {
 			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return
@@ -107,18 +104,15 @@ func LikeCoffeeShop(app *application.App) http.HandlerFunc {
 // @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /likes [delete]
+// @Router       /likes/{coffee_shop_id} [delete]
 func UnlikeCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		userId, err := utils.GetDataFromToken(r, "userId")
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
-			return
-		}
+		ctx := r.Context()
+		userId := ctx.Value("userId")
 		// Cast userId as String
 		var unLikeRequest = models.LikeUnlikeCoffeeShopRequest{UserId: userId.(string), ShopId: params["shop_id"]}
-		err = app.Repo.UnlikeCoffeeShop(r.Context(), &unLikeRequest)
+		err := app.Repo.UnlikeCoffeeShop(ctx, &unLikeRequest)
 		if err != nil {
 			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return

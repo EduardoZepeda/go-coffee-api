@@ -7,20 +7,19 @@ import (
 	"github.com/EduardoZepeda/go-coffee-api/application"
 	"github.com/EduardoZepeda/go-coffee-api/models"
 	"github.com/EduardoZepeda/go-coffee-api/types"
-	"github.com/EduardoZepeda/go-coffee-api/utils"
 	"github.com/gorilla/mux"
 )
 
 // Return the list of following users godoc
 // @Summary      Return following users,
 // @Description  Return following users from a given user Id
-// @Tags         follow
+// @Tags         follows
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User id"
 // @Success      200  {array}  models.GetUserResponse
 // @Failure      500  {object}  types.ApiError
-// @Router       /following/{id} [get]
+// @Router       /following/{user_id} [get]
 func GetUserFollowingAccounts(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -41,13 +40,13 @@ func GetUserFollowingAccounts(app *application.App) http.HandlerFunc {
 // Return the list of user's followers  godoc
 // @Summary      Return user's followers,
 // @Description  Return user's followers from a given user Id
-// @Tags         follow
+// @Tags         follows
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User id"
 // @Success      200  {array}  models.GetUserResponse
 // @Failure      500  {object}  types.ApiError
-// @Router       /followers/{id} [get]
+// @Router       /followers/{user_id} [get]
 func GetUserFollowers(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -68,7 +67,7 @@ func GetUserFollowers(app *application.App) http.HandlerFunc {
 // Follow a user account godoc
 // @Summary      Follow user,
 // @Description  Follow a user account using its id
-// @Tags         follow
+// @Tags         follows
 // @Accept       json
 // @Produce      json
 // @Param request body models.FollowUnfollowRequest true "Follow a user account"
@@ -85,14 +84,11 @@ func FollowUser(app *application.App) http.HandlerFunc {
 			app.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include a UserToId field which is a user Id"}, http.StatusBadRequest)
 			return
 		}
-		userId, err := utils.GetDataFromToken(r, "userId")
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
-			return
-		}
+		ctx := r.Context()
+		userId := ctx.Value("userId")
 		// Cast userId as String
 		followRequest.UserFromId = userId.(string)
-		err = app.Repo.FollowUser(r.Context(), &followRequest)
+		err := app.Repo.FollowUser(ctx, &followRequest)
 		if err != nil {
 			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return
@@ -105,28 +101,25 @@ func FollowUser(app *application.App) http.HandlerFunc {
 // Unfollow a user account godoc
 // @Summary      Unfollow user,
 // @Description  Unfollow a user account using its id
-// @Tags         follow
+// @Tags         follows
 // @Accept       json
 // @Produce      json
 // @Param request body models.FollowUnfollowRequest true "Unfollow a user account"
 // @Success      204  {object}  models.FollowUnfollowRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /following [delete]
+// @Router       /following/{user_id} [delete]
 func UnfollowUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 		var unfollowRequest = models.FollowUnfollowRequest{}
-		userId, err := utils.GetDataFromToken(r, "userId")
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
-			return
-		}
+		ctx := r.Context()
+		userId := ctx.Value("userId")
 		// Cast userId as String
 		unfollowRequest.UserFromId = userId.(string)
 		// Obtain UserToId from url path
 		unfollowRequest.UserToId = params["id"]
-		err = app.Repo.UnfollowUser(r.Context(), &unfollowRequest)
+		err := app.Repo.UnfollowUser(ctx, &unfollowRequest)
 		if err != nil {
 			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return

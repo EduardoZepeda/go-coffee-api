@@ -17,7 +17,7 @@ import (
 // GetCoffeeShops godoc
 // @Summary      Get a list of coffee shops
 // @Description  Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.
-// @Tags         coffee shop
+// @Tags         coffee shops
 // @Accept       json
 // @Produce      json
 // @Param page query int false "Page number"
@@ -28,7 +28,7 @@ import (
 // @Success      200  {array}  models.CoffeeShop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /cafes [get]
+// @Router       /coffee-shops [get]
 func GetCoffeeShops(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -51,6 +51,11 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 				app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
 				return
 			}
+			if len(cafes) == 0 {
+				// if query returns nothing return 404 and []
+				app.Respond(w, []int{}, http.StatusNotFound)
+				return
+			}
 			app.Respond(w, cafes, http.StatusOK)
 			return
 		}
@@ -60,6 +65,11 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 			cafes, err := app.Repo.GetNearestCoffeeShop(r.Context(), userCoordinates)
 			if err != nil {
 				app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
+				return
+			}
+			if len(cafes) == 0 {
+				// if query returns nothing return 404 and []
+				app.Respond(w, []int{}, http.StatusNotFound)
 				return
 			}
 			app.Respond(w, cafes, http.StatusOK)
@@ -85,14 +95,14 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 // GetCoffeeShopById godoc
 // @Summary      Get a coffee shop by its id
 // @Description  Get a specific coffee shop object. Id parameter must be an integer.
-// @Tags         coffee shop
+// @Tags         coffee shops
 // @Accept       json
 // @Produce      json
 // @Param id path string true "Coffee Shop ID"
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /cafes/{id} [get]
+// @Router       /coffee-shops/{id} [get]
 func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -113,7 +123,7 @@ func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 // CreateCoffeeShop godoc
 // @Summary      Create a new coffee shop
 // @Description  Create a coffee shop object.
-// @Tags         coffee shop
+// @Tags         coffee shops
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "New Coffee Shop data"
@@ -121,7 +131,7 @@ func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /cafes [post]
+// @Router       /coffee-shops [post]
 func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var coffeeShop = models.CoffeeShop{}
@@ -150,7 +160,7 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 // UpdateCoffeeShop godoc
 // @Summary      Update a coffee shop
 // @Description  Update a coffee shop object by its Id.
-// @Tags         coffee shop
+// @Tags         coffee shops
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "Updated Coffee Shop data"
@@ -158,7 +168,7 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /cafes/{id} [put]
+// @Router       /coffee-shops/{id} [put]
 func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -187,13 +197,13 @@ func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
 // DeleteCoffeeShop godoc
 // @Summary      Delete a coffee shop
 // @Description  Delete a coffee shop object by its Id.
-// @Tags         coffee shop
+// @Tags         coffee shops
 // @Accept       json
 // @Produce      json
 // @Param id path string true "Coffee Shop ID"
 // @Success      204  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
-// @Router       /cafes/{id} [delete]
+// @Router       /coffee-shops/{id} [delete]
 func DeleteCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -209,7 +219,7 @@ func DeleteCoffeeShop(app *application.App) http.HandlerFunc {
 // SearchCoffeeShops godoc
 // @Summary      Search coffee shops by a given word
 // @Description  Search coffee shops by a given word, default number of results are 10
-// @Tags         coffee shop, search
+// @Tags         coffee shops, search
 // @Accept       json
 // @Produce      json
 // @Param searchTerm path string true "Search term"
@@ -219,7 +229,7 @@ func DeleteCoffeeShop(app *application.App) http.HandlerFunc {
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Failure      404  {object}  []models.EmptyBody
-// @Router       /cafes/search/{searchTerm} [get]
+// @Router       /coffee-shops/search/{searchTerm} [get]
 func SearchCoffeeShops(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -251,7 +261,7 @@ func SearchCoffeeShops(app *application.App) http.HandlerFunc {
 // NearestCafe godoc
 // @Summary      Get a list of the nearest coffee shops
 // @Description  Get a list of the user nearest coffee shops in Guadalajara, ordered by distance. It needs user's latitude and longitude as float numbers. Treated as POST to prevent third parties saving users' location into databases.
-// @Tags         coffee shop,search
+// @Tags         coffee shops,search
 // @Accept       json
 // @Produce      json
 // @Param request body models.UserCoordinates true "User coordinates (latitude, longitude) in JSON"
@@ -259,7 +269,7 @@ func SearchCoffeeShops(app *application.App) http.HandlerFunc {
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Failure      404  {object}  []models.EmptyBody
-// @Router       /cafes/nearest [post]
+// @Router       /coffee-shops/nearest [post]
 func GetNearestCoffeeShop(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userCoordinates = models.UserCoordinates{}

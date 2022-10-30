@@ -19,7 +19,7 @@ import (
 // Login a user godoc
 // @Summary      Login a user,
 // @Description  Login a user using email and password receive a JWT as a response from a successful login
-// @Tags         user
+// @Tags         users
 // @Accept       json
 // @Produce      json
 // @Param request body models.LoginRequest true "Login data: email and password"
@@ -78,14 +78,14 @@ func LoginUser(app *application.App) http.HandlerFunc {
 // Register a new user godoc
 // @Summary      Register a new user,
 // @Description  Register a user using email, username, password and password confirmation
-// @Tags         user
+// @Tags         users
 // @Accept       json
 // @Produce      json
 // @Param request body models.SignUpRequest true "Login data: email, password and password confirmation"
 // @Success      201  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user [post]
+// @Router       /signup [post]
 func RegisterUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var SignUpRequest = models.SignUpRequest{}
@@ -121,7 +121,7 @@ func RegisterUser(app *application.App) http.HandlerFunc {
 // Update the current user godoc
 // @Summary      Update current user,
 // @Description  Update the current user's bio, first name, last name and username
-// @Tags         user
+// @Tags         users
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User ID"
@@ -129,7 +129,7 @@ func RegisterUser(app *application.App) http.HandlerFunc {
 // @Success      200  {object}  models.UpdateUserRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user/{id} [put]
+// @Router       /user/{user_id} [put]
 func UpdateUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -140,12 +140,8 @@ func UpdateUser(app *application.App) http.HandlerFunc {
 			app.Respond(w, types.ApiError{Message: "Invalid syntax. Request body must include an id, bio, firstName, lastName and username fields."}, http.StatusBadRequest)
 			return
 		}
-		userId, err := utils.GetDataFromToken(r, "userId")
-		if err != nil {
-			app.Logger.Println(err)
-			app.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
-			return
-		}
+		ctx := r.Context()
+		userId := ctx.Value("userId")
 		// If claims from JWT token and params are differente raise an error
 		if params["id"] != userId {
 			app.Respond(w, types.ApiError{Message: "You don't have permissions to update this account."}, http.StatusBadRequest)
@@ -159,7 +155,7 @@ func UpdateUser(app *application.App) http.HandlerFunc {
 		}
 		// Ignore any id coming from user, and assign it to params id
 		UpdateUserRequest.Id = params["id"]
-		err = app.Repo.UpdateUser(r.Context(), &UpdateUserRequest)
+		err := app.Repo.UpdateUser(ctx, &UpdateUserRequest)
 		if err != nil {
 			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
 			return
@@ -173,14 +169,14 @@ func UpdateUser(app *application.App) http.HandlerFunc {
 // Get user account data godoc
 // @Summary      Get an user account data,
 // @Description  Get id, username, email, first name, last name and bio from a user
-// @Tags         user
+// @Tags         users
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User ID"
 // @Success      200  {object}  models.GetUserResponse
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user/{id} [get]
+// @Router       /user/{user_id} [get]
 func GetUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -202,28 +198,25 @@ func GetUser(app *application.App) http.HandlerFunc {
 // Delete the current user godoc
 // @Summary      Delete current user
 // @Description  Delete the current user account
-// @Tags         user
+// @Tags         users
 // @Accept       json
 // @Produce      json
 // @Param id path string true "User ID"
 // @Success      204  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user/{id} [delete]
+// @Router       /user/{user_id} [delete]
 func DeleteUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		userId, err := utils.GetDataFromToken(r, "userId")
-		if err != nil {
-			app.Respond(w, types.ApiError{Message: "There was an error with your Authorization header token"}, http.StatusBadRequest)
-			return
-		}
+		ctx := r.Context()
+		userId := ctx.Value("userId")
 		// If claims from JWT token and params are differente raise an error
 		if params["id"] != userId {
 			app.Respond(w, types.ApiError{Message: "You don't have permissions to delete this account."}, http.StatusBadRequest)
 			return
 		}
-		err = app.Repo.DeleteUser(r.Context(), params["id"])
+		err := app.Repo.DeleteUser(ctx, params["id"])
 		if err != nil {
 			app.Logger.Println(err)
 			app.Respond(w, types.ApiError{Message: "There was an error in the server. We'll check this issue. Please try again later"}, http.StatusInternalServerError)
