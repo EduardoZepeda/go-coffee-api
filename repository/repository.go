@@ -27,6 +27,7 @@ type Repository interface {
 	GetLikedCoffeeShops(ctx context.Context, likes *models.LikesByUserRequest) ([]*models.CoffeeShop, error)
 	LikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error
 	UnlikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error
+	GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error)
 	Close() error
 }
 
@@ -110,6 +111,10 @@ func LikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopReques
 
 func UnlikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error {
 	return implementation.UnlikeCoffeeShop(ctx, like)
+}
+
+func GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error) {
+	return implementation.GetUserFeed(ctx, id)
 }
 
 func Close() error {

@@ -157,6 +157,12 @@ func (repo *PostgresRepository) GetLikedCoffeeShops(ctx context.Context, likes *
 
 func (repo *PostgresRepository) LikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error {
 	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO shops_shop_likes (shop_id, user_id) VALUES (:ShopId, :UserId);", like)
+	if err != nil {
+		// Check for user constraints on database
+		if strings.Contains(err.Error(), "shops_shop_likes_shop_id_user_id_09e87394_uniq") {
+			return errors.New("You already like that coffee shop. You can't like it twice.")
+		}
+	}
 	return err
 }
 
@@ -165,6 +171,22 @@ func (repo *PostgresRepository) UnlikeCoffeeShop(ctx context.Context, like *mode
 	return err
 }
 
+func (repo *PostgresRepository) GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error) {
+	var feed []*models.Feed
+	// target_ct_id makes reference to a table that keeps a register of the used models
+	err := repo.db.SelectContext(ctx, &feed, `SELECT accounts_user.username, feeds_action.action, 
+	CASE WHEN feeds_action.target_ct_id = 8 THEN shops_shop.name 
+	WHEN feeds_action.target_ct_id = 6 THEN (SELECT username FROM accounts_user WHERE feeds_action.target_id = id) END AS target 
+	FROM feeds_action JOIN accounts_user ON feeds_action.user_id = accounts_user.id  JOIN shops_shop on feeds_action.target_id = shops_shop.id WHERE accounts_user.id = $1 ORDER BY feeds_action.created DESC LIMIT 10;`, id)
+	return feed, err
+}
+
 func (repo *PostgresRepository) Close() error {
 	return repo.db.Close()
 }
+
+// SELECT accounts_user.username, feeds_action.action,
+// CASE WHEN feeds_action.target_ct_id = 8 THEN shops_shop.name
+// WHEN feeds_action.target_ct_id = 6 THEN (SELECT username FROM accounts_user WHERE feeds_action.target_id = id)
+// END AS object_name
+// FROM feeds_action JOIN accounts_user ON feeds_action.user_id = accounts_user.id  JOIN shops_shop on feeds_action.target_id = shops_shop.id WHERE accounts_user.id = 1 ORDER BY feeds_action.created DESC LIMIT 10;
