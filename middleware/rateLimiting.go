@@ -3,6 +3,7 @@ package middleware
 import (
 	"net"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
@@ -39,22 +40,25 @@ func RateLimit(app *application.App) func(h http.Handler) http.Handler {
 		}()
 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// The following code works allow to handle ip addresses that include the port, ideal for localhost
-			// I leave it for reference purposes
-			// ip, _, err := net.SplitHostPort(r.RemoteAddr)
-			// if err != nil {
-			// 	app.Logger.Println(err)
-			// 	app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
-			//}
-			// ParseIP doesn't allow the port to be included in the url
-			parsedIp := net.ParseIP(r.RemoteAddr)
-			if parsedIp == nil {
-				app.Respond(w, types.ApiError{Message: "Couldn't parse your ip address"}, http.StatusInternalServerError)
-				return
+			var ip string
+			var err error
+			if os.Getenv("MODE") == "dev" {
+				// The following code works allow to handle ip addresses that include the port, ideal for localhost
+				ip, _, err = net.SplitHostPort(r.RemoteAddr)
+				if err != nil {
+					app.Logger.Println(err)
+					app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusInternalServerError)
+				}
+			} else {
+				// ParseIP doesn't allow the port to be included in the url, therefore, if we're in production we use ParseIP instead
+				parsedIp := net.ParseIP(r.RemoteAddr)
+				if parsedIp == nil {
+					app.Respond(w, types.ApiError{Message: "Couldn't parse your ip address"}, http.StatusInternalServerError)
+					return
+				}
+				ip = parsedIp.String()
 			}
-			ip := parsedIp.String()
 			mu.Lock()
-
 			if _, found := clients[ip]; !found {
 				// If the ip doesn't exist, add it to the black list
 				clients[ip] = &client{limiter: rate.NewLimiter(2, 4)}
