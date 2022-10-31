@@ -101,6 +101,7 @@ func LikeCoffeeShop(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param request body models.LikeUnlikeCoffeeShopRequest true "Unlike a coffee shop"
+// @Param coffee_shop_id path string true "Coffee shop id"
 // @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError

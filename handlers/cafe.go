@@ -98,7 +98,7 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 // @Tags         coffee shops
 // @Accept       json
 // @Produce      json
-// @Param id path string true "Coffee Shop ID"
+// @Param coffee_shop_id path string true "Coffee Shop ID"
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
@@ -166,6 +166,7 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "Updated Coffee Shop data"
+// @Param coffee_shop_id path string true "Coffee Shop ID"
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
@@ -202,7 +203,7 @@ func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Tags         coffee shops
 // @Accept       json
 // @Produce      json
-// @Param id path string true "Coffee Shop ID"
+// @Param coffee_shop_id path string true "Coffee Shop ID"
 // @Success      204  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /coffee-shops/{coffee_shop_id} [delete]

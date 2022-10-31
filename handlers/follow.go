@@ -16,7 +16,7 @@ import (
 // @Tags         follows
 // @Accept       json
 // @Produce      json
-// @Param id path string true "User id"
+// @Param user_id path string true "User id"
 // @Success      200  {array}  models.GetUserResponse
 // @Failure      500  {object}  types.ApiError
 // @Router       /following/{user_id} [get]
@@ -43,7 +43,7 @@ func GetUserFollowingAccounts(app *application.App) http.HandlerFunc {
 // @Tags         follows
 // @Accept       json
 // @Produce      json
-// @Param id path string true "User id"
+// @Param user_id path string true "User id"
 // @Success      200  {array}  models.GetUserResponse
 // @Failure      500  {object}  types.ApiError
 // @Router       /followers/{user_id} [get]
@@ -105,6 +105,7 @@ func FollowUser(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param request body models.FollowUnfollowRequest true "Unfollow a user account"
+// @Param user_id path string true "User id"
 // @Success      204  {object}  models.FollowUnfollowRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError

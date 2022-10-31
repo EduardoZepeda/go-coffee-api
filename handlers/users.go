@@ -124,7 +124,7 @@ func RegisterUser(app *application.App) http.HandlerFunc {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param id path string true "User ID"
+// @Param user_id path string true "User ID"
 // @Param request body models.UpdateUserRequest true "User data: id, bio, firstName, lastName and username"
 // @Success      200  {object}  models.UpdateUserRequest
 // @Failure      400  {object}  types.ApiError
@@ -172,7 +172,7 @@ func UpdateUser(app *application.App) http.HandlerFunc {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param id path string true "User ID"
+// @Param user_id path string true "User ID"
 // @Success      200  {object}  models.GetUserResponse
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
@@ -201,7 +201,7 @@ func GetUser(app *application.App) http.HandlerFunc {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param id path string true "User ID"
+// @Param user_id path string true "User ID"
 // @Success      204  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
