@@ -12,7 +12,7 @@ type CoffeeShop struct {
 	Address      string      `db:"address" json:"address,omitempty"`
 	City         string      `db:"city" json:"city,omitempty"`
 	Roaster      bool        `db:"roaster" json:"roaster"`
-	Location     types.Point `db:"location" sql:"type:geometry"`
+	Location     types.Point `db:"location" json:"location" sql:"type:geometry"`
 	Rating       float32     `db:"rating" json:"rating,omitempty"`
 	CreatedDate  time.Time   `db:"created_date" json:"created_date,omitempty" swaggerignore:"true"`
 	ModifiedDate time.Time   `db:"modified_date" json:"modified_date,omitempty" swaggerignore:"true"`

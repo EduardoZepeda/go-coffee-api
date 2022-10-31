@@ -70,7 +70,7 @@ func IsStaffOrReadOnly(app *application.App) func(h http.Handler) http.Handler {
 			isStaff, err := utils.GetDataFromToken(r, "isStaff")
 			if err != nil {
 				app.Logger.Println(err)
-				app.Respond(w, err.Error(), http.StatusUnauthorized)
+				app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusUnauthorized)
 				return
 			}
 			if !isStaff.(bool) {

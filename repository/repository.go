@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	GetCoffeeShops(ctx context.Context, page uint64, size uint64) ([]*models.CoffeeShop, error)
 	GetCoffeeShopById(ctx context.Context, id string) (*models.CoffeeShop, error)
-	CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error
+	CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) (string, error)
 	DeleteCoffeeShop(ctx context.Context, id string) error
 	UpdateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error
 	SearchCoffeeShops(ctx context.Context, query string, page uint64, size uint64) ([]*models.CoffeeShop, error)
@@ -45,7 +45,7 @@ func GetCoffeeShopById(ctx context.Context, id string) (*models.CoffeeShop, erro
 	return implementation.GetCoffeeShopById(ctx, id)
 }
 
-func CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
+func CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) (string, error) {
 	return implementation.CreateCoffeeShop(ctx, shopRequest)
 }
 

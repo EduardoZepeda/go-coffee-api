@@ -71,7 +71,7 @@ func LoginUser(app *application.App) http.HandlerFunc {
 			Token: tokenString,
 		}
 		app.Logger.Printf("User: %s has logged in", loginRequest.Email)
-		app.Respond(w, tokenResponse, http.StatusCreated)
+		app.Respond(w, tokenResponse, http.StatusOK)
 	}
 }
 
@@ -109,7 +109,7 @@ func RegisterUser(app *application.App) http.HandlerFunc {
 		err = app.Repo.RegisterUser(r.Context(), &SignUpRequest)
 		if err != nil {
 			app.Logger.Println(err)
-			app.Respond(w, types.ApiError{Message: "There was an error in the server. We'll check this issue. Please try again later"}, http.StatusInternalServerError)
+			app.Respond(w, types.ApiError{Message: err.Error()}, http.StatusBadRequest)
 			return
 		}
 		app.Logger.Printf("User with email: %s has been registered", SignUpRequest.Email)
