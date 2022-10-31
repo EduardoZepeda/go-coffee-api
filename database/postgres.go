@@ -33,9 +33,9 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 	if err != nil {
 		return nil, err
 	}
-	db.SetMaxOpenConns(500)                   // The default is 0 (unlimited)
-	db.SetMaxIdleConns(10)                    // defaultMaxIdleConns = 2
-	db.SetConnMaxLifetime(3600 * time.Second) // 0, connections are reused forever.
+	db.SetMaxOpenConns(25)                 // The default is 0 (unlimited)
+	db.SetMaxIdleConns(25)                 // defaultMaxIdleConns = 2
+	db.SetConnMaxLifetime(1 * time.Minute) // 0, connections are reused forever.
 	// Return an error if opening the database takes longer than 5 seconds
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -59,9 +59,10 @@ func (repo *PostgresRepository) GetCoffeeShopById(ctx context.Context, id string
 	return &shop, err
 }
 
-func (repo *PostgresRepository) CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
-	_, err := repo.db.NamedExecContext(ctx, "INSERT INTO shops_shop (name, location, city, roaster, address, rating, created_date, modified_date) VALUES (:name, :location, :city, :roaster, :address, :rating, current_timestamp, current_timestamp);", shopRequest)
-	return err
+func (repo *PostgresRepository) CreateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) (string, error) {
+	var id string
+	err := repo.db.QueryRowContext(ctx, "INSERT INTO shops_shop (name, location, city, roaster, address, rating, created_date, modified_date) VALUES ($1, $2, $3, $4, $5, $6, current_timestamp, current_timestamp) RETURNING id;", shopRequest.Name, shopRequest.Location, shopRequest.City, shopRequest.Roaster, shopRequest.Address, shopRequest.Rating).Scan(&id)
+	return id, err
 }
 
 func (repo *PostgresRepository) UpdateCoffeeShop(ctx context.Context, shopRequest *models.CoffeeShop) error {
