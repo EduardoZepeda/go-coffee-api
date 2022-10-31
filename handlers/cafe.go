@@ -147,11 +147,13 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 			app.Respond(w, types.ApiError{Errors: &v.Errors}, http.StatusBadRequest)
 			return
 		}
-		err := app.Repo.CreateCoffeeShop(r.Context(), &coffeeShop)
+		insertedId, err := app.Repo.CreateCoffeeShop(r.Context(), &coffeeShop)
 		if err != nil {
+			app.Logger.Println(err)
 			app.Respond(w, types.ApiError{Message: "There was an internal server error"}, http.StatusInternalServerError)
 			return
 		}
+		coffeeShop.ID = insertedId
 		app.Respond(w, coffeeShop, http.StatusCreated)
 		return
 	}
