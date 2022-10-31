@@ -129,7 +129,7 @@ func RegisterUser(app *application.App) http.HandlerFunc {
 // @Success      200  {object}  models.UpdateUserRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user/{user_id} [put]
+// @Router       /users/{user_id} [put]
 func UpdateUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -176,7 +176,7 @@ func UpdateUser(app *application.App) http.HandlerFunc {
 // @Success      200  {object}  models.GetUserResponse
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user/{user_id} [get]
+// @Router       /users/{user_id} [get]
 func GetUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
@@ -205,7 +205,7 @@ func GetUser(app *application.App) http.HandlerFunc {
 // @Success      204  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
-// @Router       /user/{user_id} [delete]
+// @Router       /users/{user_id} [delete]
 func DeleteUser(app *application.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
