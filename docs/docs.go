@@ -724,7 +724,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{user_id}": {
+        "/users/{user_id}": {
             "get": {
                 "description": "Get id, username, email, first name, last name and bio from a user",
                 "consumes": [

@@ -579,7 +579,7 @@ paths:
       summary: Register a new user,
       tags:
       - users
-  /user/{user_id}:
+  /users/{user_id}:
     delete:
       consumes:
       - application/json
