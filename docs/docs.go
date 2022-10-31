@@ -161,7 +161,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Coffee Shop ID",
-                        "name": "id",
+                        "name": "coffee_shop_id",
                         "in": "path",
                         "required": true
                     }
@@ -208,6 +208,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.CoffeeShop"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Coffee Shop ID",
+                        "name": "coffee_shop_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -253,7 +260,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Coffee Shop ID",
-                        "name": "id",
+                        "name": "coffee_shop_id",
                         "in": "path",
                         "required": true
                     }
@@ -329,7 +336,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User id",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }
@@ -416,7 +423,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User id",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }
@@ -460,6 +467,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.FollowUnfollowRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "User id",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -608,6 +622,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Coffee shop id",
+                        "name": "coffee_shop_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -741,7 +762,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User ID",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }
@@ -783,7 +804,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User ID",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     },
@@ -834,7 +855,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User ID",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }

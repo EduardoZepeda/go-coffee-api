@@ -204,7 +204,7 @@ paths:
       parameters:
       - description: Coffee Shop ID
         in: path
-        name: id
+        name: coffee_shop_id
         required: true
         type: string
       produces:
@@ -228,7 +228,7 @@ paths:
       parameters:
       - description: Coffee Shop ID
         in: path
-        name: id
+        name: coffee_shop_id
         required: true
         type: string
       produces:
@@ -260,6 +260,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.CoffeeShop'
+      - description: Coffee Shop ID
+        in: path
+        name: coffee_shop_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -316,7 +321,7 @@ paths:
       parameters:
       - description: User id
         in: path
-        name: id
+        name: user_id
         required: true
         type: string
       produces:
@@ -377,6 +382,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.FollowUnfollowRequest'
+      - description: User id
+        in: path
+        name: user_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -402,7 +412,7 @@ paths:
       parameters:
       - description: User id
         in: path
-        name: id
+        name: user_id
         required: true
         type: string
       produces:
@@ -500,6 +510,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+      - description: Coffee shop id
+        in: path
+        name: coffee_shop_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -587,7 +602,7 @@ paths:
       parameters:
       - description: User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: string
       produces:
@@ -615,7 +630,7 @@ paths:
       parameters:
       - description: User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: string
       produces:
@@ -643,7 +658,7 @@ paths:
       parameters:
       - description: User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: string
       - description: 'User data: id, bio, firstName, lastName and username'
