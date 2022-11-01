@@ -13,32 +13,31 @@ import (
 )
 
 func RateLimit(app *application.App) func(h http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		type client struct {
-			limiter     *rate.Limiter
-			lastRequest time.Time
-		}
+	type client struct {
+		limiter     *rate.Limiter
+		lastRequest time.Time
+	}
 
-		var (
-			mu sync.Mutex
-			// Create a black list for clients with too much requests
-			clients = make(map[string]*client)
-		)
-		// go routine that deletes the go through the black list every 5 minutes and deletes all the inactive clients
-		go func() {
-			for {
-				time.Sleep(5 * time.Minute)
-				mu.Lock()
-				// If the client last request was more than 2 minute ago, remove them from the black list
-				for ip, client := range clients {
-					if time.Since(client.lastRequest) > 2*time.Minute {
-						delete(clients, ip)
-					}
+	var (
+		mu sync.Mutex
+		// Create a black list for clients with too much requests
+		clients = make(map[string]*client)
+	)
+	// go routine that deletes the go through the black list every 5 minutes and deletes all the inactive clients
+	go func() {
+		for {
+			time.Sleep(5 * time.Minute)
+			mu.Lock()
+			// If the client last request was more than 2 minute ago, remove them from the black list
+			for ip, client := range clients {
+				if time.Since(client.lastRequest) > 2*time.Minute {
+					delete(clients, ip)
 				}
-				mu.Unlock()
 			}
-		}()
-
+			mu.Unlock()
+		}
+	}()
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var ip string
 			var err error
