@@ -47,7 +47,7 @@ func (app *App) SetRouter(router *mux.Router) error {
 func (app *App) SetLogger() error {
 	// Default logger for now
 	app.Logger = log.Default()
-	app.Logger.SetFlags(log.Ldate | log.Lshortfile)
+	app.Logger.SetFlags(log.Ltime | log.Ldate | log.Lshortfile)
 	app.Logger.Println("Logging events in application")
 	return nil
 }
