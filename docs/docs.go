@@ -53,7 +53,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Search term",
-                        "name": "searchTerm",
+                        "name": "search",
                         "in": "query"
                     },
                     {

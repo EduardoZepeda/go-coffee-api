@@ -77,13 +77,13 @@ func (repo *PostgresRepository) DeleteCoffeeShop(ctx context.Context, id string)
 
 func (repo *PostgresRepository) SearchCoffeeShops(ctx context.Context, query string, page uint64, size uint64) ([]*models.CoffeeShop, error) {
 	var cafes []*models.CoffeeShop
-	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop WHERE to_tsvector(COALESCE(LOWER(name), '') || COALESCE(LOWER(address), '')) @@ plainto_tsquery($1) LIMIT $2 OFFSET $3;", query, size, page*size)
+	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, roaster, rating, created_date, modified_date FROM shops_shop WHERE to_tsvector(COALESCE(LOWER(name), '') || COALESCE(LOWER(address), '') || COALESCE(LOWER(content), '')) @@ plainto_tsquery($1) LIMIT $2 OFFSET $3;", query, size, page*size)
 	return cafes, err
 }
 
 func (repo *PostgresRepository) GetNearestCoffeeShop(ctx context.Context, UserCoordinates *models.UserCoordinates) ([]*models.CoffeeShop, error) {
 	var cafes []*models.CoffeeShop
-	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, rating, created_date, modified_date FROM shops_shop ORDER BY location <-> ST_SetSRID(ST_MakePoint($1, $2), 4326) LIMIT 10;", UserCoordinates.Latitude, UserCoordinates.Longitude)
+	err := repo.db.SelectContext(ctx, &cafes, "SELECT id, name, location, address, roaster, rating, created_date, modified_date FROM shops_shop ORDER BY location <-> ST_SetSRID(ST_MakePoint($1, $2), 4326) LIMIT 10;", UserCoordinates.Latitude, UserCoordinates.Longitude)
 	return cafes, err
 }
 
@@ -175,6 +175,7 @@ func (repo *PostgresRepository) UnlikeCoffeeShop(ctx context.Context, like *mode
 func (repo *PostgresRepository) GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error) {
 	var feed []*models.Feed
 	// target_ct_id makes reference to a table that keeps a register of the used models
+	// Since feeds consists only of shops and users (8 and 6), the target_ct_id are hardcoded
 	err := repo.db.SelectContext(ctx, &feed, `SELECT accounts_user.username, feeds_action.action, 
 	CASE WHEN feeds_action.target_ct_id = 8 THEN shops_shop.name 
 	WHEN feeds_action.target_ct_id = 6 THEN (SELECT username FROM accounts_user WHERE feeds_action.target_id = id) END AS target 
@@ -185,9 +186,3 @@ func (repo *PostgresRepository) GetUserFeed(ctx context.Context, id string) ([]*
 func (repo *PostgresRepository) Close() error {
 	return repo.db.Close()
 }
-
-// SELECT accounts_user.username, feeds_action.action,
-// CASE WHEN feeds_action.target_ct_id = 8 THEN shops_shop.name
-// WHEN feeds_action.target_ct_id = 6 THEN (SELECT username FROM accounts_user WHERE feeds_action.target_id = id)
-// END AS object_name
-// FROM feeds_action JOIN accounts_user ON feeds_action.user_id = accounts_user.id  JOIN shops_shop on feeds_action.target_id = shops_shop.id WHERE accounts_user.id = 1 ORDER BY feeds_action.created DESC LIMIT 10;

@@ -22,7 +22,7 @@ import (
 // @Produce      json
 // @Param page query int false "Page number"
 // @Param size query int false "Size number"
-// @Param searchTerm query string false "Search term"
+// @Param search query string false "Search term"
 // @Param longitude query float32 false "User longitude"
 // @Param latitude query float32 false "User latitude"
 // @Success      200  {array}  models.CoffeeShop

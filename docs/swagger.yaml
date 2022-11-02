@@ -133,7 +133,7 @@ paths:
         type: integer
       - description: Search term
         in: query
-        name: searchTerm
+        name: search
         type: string
       - description: User longitude
         in: query
