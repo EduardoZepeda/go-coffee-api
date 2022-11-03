@@ -46,7 +46,7 @@ func GetDataFromToken(r *http.Request, data string) (interface{}, error) {
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
-	if err != nil && token.Valid {
+	if err != nil || !token.Valid {
 		return nil, err
 	}
 	return claims[data], nil
