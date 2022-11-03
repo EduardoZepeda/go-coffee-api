@@ -182,8 +182,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.CoffeeShop'
         "400":
@@ -429,7 +429,7 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/models.FollowUnfollowRequest'
+            $ref: '#/definitions/models.EmptyBody'
         "400":
           description: Bad Request
           schema:
@@ -574,10 +574,10 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "204":
+          description: No Content
           schema:
-            $ref: '#/definitions/models.LikeUnlikeCoffeeShopRequest'
+            $ref: '#/definitions/models.EmptyBody'
         "400":
           description: Bad Request
           schema:

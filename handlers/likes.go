@@ -105,7 +105,7 @@ func LikeCoffeeShop(app *application.App) http.HandlerFunc {
 // @Param request body models.LikeUnlikeCoffeeShopRequest true "Unlike a coffee shop"
 // @Param coffee_shop_id path string true "Coffee shop id"
 // @Param Authorization header string true "With the bearer started."
-// @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
+// @Success      204  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /likes/{coffee_shop_id} [delete]

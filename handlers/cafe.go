@@ -128,7 +128,7 @@ func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 // @Produce      json
 // @Param request body models.CoffeeShop true "New Coffee Shop data"
 // @Param Authorization header string true "With the bearer started. Only staff members"
-// @Success      200  {object}  models.CoffeeShop
+// @Success      201  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError

@@ -110,7 +110,7 @@ func FollowUser(app *application.App) http.HandlerFunc {
 // @Param request body models.FollowUnfollowRequest true "Unfollow a user account"
 // @Param user_id path string true "User id"
 // @Param Authorization header string true "With the bearer started."
-// @Success      204  {object}  models.FollowUnfollowRequest
+// @Success      204  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
 // @Router       /following/{user_id} [delete]

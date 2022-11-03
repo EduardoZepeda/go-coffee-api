@@ -124,8 +124,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.CoffeeShop"
                         }
@@ -538,7 +538,7 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/models.FollowUnfollowRequest"
+                            "$ref": "#/definitions/models.EmptyBody"
                         }
                     },
                     "400": {
@@ -711,10 +711,10 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
+                            "$ref": "#/definitions/models.EmptyBody"
                         }
                     },
                     "400": {
