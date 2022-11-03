@@ -175,11 +175,11 @@ func (repo *PostgresRepository) UnlikeCoffeeShop(ctx context.Context, like *mode
 func (repo *PostgresRepository) GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error) {
 	var feed []*models.Feed
 	// target_ct_id makes reference to a table that keeps a register of the used models
-	// Since feeds consists only of shops and users (8 and 6), the target_ct_id are hardcoded
+	// Since feeds consists only of shops and users (7 and 9), the target_ct_id are hardcoded
 	err := repo.db.SelectContext(ctx, &feed, `SELECT accounts_user.username, feeds_action.action, 
-	CASE WHEN feeds_action.target_ct_id = 8 THEN shops_shop.name 
-	WHEN feeds_action.target_ct_id = 6 THEN (SELECT username FROM accounts_user WHERE feeds_action.target_id = id) END AS target 
-	FROM feeds_action JOIN accounts_user ON feeds_action.user_id = accounts_user.id  JOIN shops_shop on feeds_action.target_id = shops_shop.id WHERE accounts_user.id = $1 ORDER BY feeds_action.created DESC LIMIT 10;`, id)
+	CASE WHEN feeds_action.target_ct_id = 7 THEN shops_shop.name 
+	WHEN feeds_action.target_ct_id = 9 THEN (SELECT username FROM accounts_user WHERE feeds_action.target_id = id) END AS target 
+	FROM feeds_action JOIN accounts_user ON feeds_action.user_id = accounts_user.id  JOIN shops_shop on feeds_action.target_id = shops_shop.id WHERE accounts_user.id = $1 ORDER BY feeds_action.created DESC LIMIT 20;`, id)
 	return feed, err
 }
 
