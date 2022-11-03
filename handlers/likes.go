@@ -21,6 +21,7 @@ import (
 // @Param user query int false "User id"
 // @Param page query int false "Page number"
 // @Param size query int false "Size number"
+// @Param Authorization header string true "With the bearer started."
 // @Success      200  {array}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
@@ -67,6 +68,7 @@ func GetLikedCoffeeShops(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param request body models.LikeUnlikeCoffeeShopRequest true "Like a coffee shop"
+// @Param Authorization header string true "With the bearer started."
 // @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
@@ -102,6 +104,7 @@ func LikeCoffeeShop(app *application.App) http.HandlerFunc {
 // @Produce      json
 // @Param request body models.LikeUnlikeCoffeeShopRequest true "Unlike a coffee shop"
 // @Param coffee_shop_id path string true "Coffee shop id"
+// @Param Authorization header string true "With the bearer started."
 // @Success      201  {object}  models.LikeUnlikeCoffeeShopRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError

@@ -127,6 +127,7 @@ func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "New Coffee Shop data"
+// @Param Authorization header string true "With the bearer started. Only staff members"
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
 // @Failure      404  {object}  types.ApiError
@@ -166,6 +167,7 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param request body models.CoffeeShop true "Updated Coffee Shop data"
+// @Param Authorization header string true "With the bearer started. Only staff members"
 // @Param coffee_shop_id path string true "Coffee Shop ID"
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
@@ -204,6 +206,7 @@ func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param coffee_shop_id path string true "Coffee Shop ID"
+// @Param Authorization header string true "With the bearer started. Only staff members"
 // @Success      204  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /coffee-shops/{coffee_shop_id} [delete]

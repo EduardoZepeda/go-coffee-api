@@ -13,6 +13,7 @@ import (
 // @Tags         feed
 // @Accept       json
 // @Produce      json
+// @Param Authorization header string true "With the bearer started."
 // @Success      200 {array}  models.Feed
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError

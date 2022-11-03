@@ -114,6 +114,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.CoffeeShop"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -211,6 +218,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Coffee Shop ID",
                         "name": "coffee_shop_id",
                         "in": "path",
@@ -263,6 +277,13 @@ const docTemplate = `{
                         "name": "coffee_shop_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -294,6 +315,15 @@ const docTemplate = `{
                     "feed"
                 ],
                 "summary": "The active user's feed",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -339,6 +369,13 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -382,6 +419,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.FollowUnfollowRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -425,6 +469,13 @@ const docTemplate = `{
                         "description": "User id",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -473,6 +524,13 @@ const docTemplate = `{
                         "description": "User id",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -529,6 +587,13 @@ const docTemplate = `{
                         "description": "Size number",
                         "name": "size",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -576,6 +641,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.LikeUnlikeCoffeeShopRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -628,6 +700,13 @@ const docTemplate = `{
                         "description": "Coffee shop id",
                         "name": "coffee_shop_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -816,6 +895,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.UpdateUserRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -857,6 +943,13 @@ const docTemplate = `{
                         "description": "User ID",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started.",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],

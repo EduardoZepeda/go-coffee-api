@@ -126,6 +126,7 @@ func RegisterUser(app *application.App) http.HandlerFunc {
 // @Produce      json
 // @Param user_id path string true "User ID"
 // @Param request body models.UpdateUserRequest true "User data: id, bio, firstName, lastName and username"
+// @Param Authorization header string true "With the bearer started."
 // @Success      200  {object}  models.UpdateUserRequest
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
@@ -202,6 +203,7 @@ func GetUser(app *application.App) http.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param user_id path string true "User ID"
+// @Param Authorization header string true "With the bearer started."
 // @Success      204  {object}  models.EmptyBody
 // @Failure      400  {object}  types.ApiError
 // @Failure      500  {object}  types.ApiError
