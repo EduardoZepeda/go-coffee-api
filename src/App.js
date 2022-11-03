@@ -4,11 +4,15 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { Typography } from '@mui/material';
 import { Button } from '@mui/material';
+import Link from '@mui/material/Link';
 
 export default function App() {
 
   return (
-    <Box sx={{backgroundColor: 'grey.900', color: 'white', height: '100vh'}}>
+    <Box sx={{backgroundColor: 'grey.900', color: 'white', height: '100vh', position: 'relative'}}>
+      <Box sx={{ position: 'absolute', bottom: '24px', left: '24px'}}>
+        <Typography>Made by <Link href="https://eduardozepeda.dev" underline="none">Eduardo Zepeda</Link></Typography>
+      </Box>
       <Container sx={{ display: 'flex', flexDirection:'column',  justifyContent: 'center', alignItems: 'center', height: '100%' }}>
       <CssBaseline />
       <Box sx={{textAlign: 'center'}}>
