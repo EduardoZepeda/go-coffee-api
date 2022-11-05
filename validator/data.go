@@ -3,6 +3,7 @@ package validator
 import (
 	"net/mail"
 
+	"github.com/EduardoZepeda/go-coffee-api/database"
 	"github.com/EduardoZepeda/go-coffee-api/models"
 )
 
@@ -20,4 +21,11 @@ func ValidateUserSignup(v *Validator, user *models.SignUpRequest) {
 
 func ValidateUserUpdate(v *Validator, user *models.UpdateUserRequest) {
 	v.Validate(len(user.Bio) <= 250, "Bio", "Your profile Bio can't be greater than 250 chars")
+}
+
+func ValidateCoffeeBag(v *Validator, coffeeBag *models.CoffeeBag) {
+	_, speciesExists := database.COFFEE_SPECIES[coffeeBag.Species]
+	v.Validate(speciesExists, "Species", "That's not a valid species for a coffee bean. Valid values are: Ar, Ro, Lb and Ex.")
+	_, originExists := database.STATE_CHOICES[coffeeBag.Origin]
+	v.Validate(originExists, "Origin", "That's not a valid origin in México for coffee beans. Valid values are numbers from 01 to 32.")
 }
