@@ -28,6 +28,11 @@ type Repository interface {
 	LikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error
 	UnlikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequest) error
 	GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error)
+	GetCoffeeBag(ctx context.Context, CoffeeBagsList models.CoffeeBagsList) ([]*models.CoffeeBag, error)
+	GetCoffeeBagById(ctx context.Context, coffeeBagId string) (*models.CoffeeBag, error)
+	CreateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error)
+	UpdateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error)
+	DeleteCoffeeBag(ctx context.Context, coffeeBagId string) error
 	Close() error
 }
 
@@ -115,6 +120,26 @@ func UnlikeCoffeeShop(ctx context.Context, like *models.LikeUnlikeCoffeeShopRequ
 
 func GetUserFeed(ctx context.Context, id string) ([]*models.Feed, error) {
 	return implementation.GetUserFeed(ctx, id)
+}
+
+func GetCoffeeBag(ctx context.Context, CoffeeBagsList models.CoffeeBagsList) ([]*models.CoffeeBag, error) {
+	return implementation.GetCoffeeBag(ctx, CoffeeBagsList)
+}
+
+func GetCoffeeBagById(ctx context.Context, coffeeBagId string) (*models.CoffeeBag, error) {
+	return implementation.GetCoffeeBagById(ctx, coffeeBagId)
+}
+
+func CreateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error) {
+	return implementation.CreateCoffeeBag(ctx, coffeeBag)
+}
+
+func UpdateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error) {
+	return implementation.UpdateCoffeeBag(ctx, coffeeBag)
+}
+
+func DeleteCoffeeBag(ctx context.Context, coffeeBagId string) error {
+	return implementation.DeleteCoffeeBag(ctx, coffeeBagId)
 }
 
 func Close() error {
