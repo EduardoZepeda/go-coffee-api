@@ -111,7 +111,7 @@ definitions:
       message:
         type: string
     type: object
-host: localhost:3000
+host: go-coffee-api.vercel.app
 info:
   contact:
     email: eduardozepeda@coffeebytes.dev

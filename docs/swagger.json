@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3000",
+    "host": "go-coffee-api.vercel.app",
     "basePath": "/api/v1",
     "paths": {
         "/coffee-bags": {
