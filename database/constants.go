@@ -1,0 +1,43 @@
+package database
+
+var STATE_CHOICES = map[string]string{
+	"26": "Sonora",
+	"10": "Durango",
+	"03": "Baja California Sur",
+	"04": "Campeche",
+	"16": "Michoacán de Ocampo",
+	"31": "Yucatán",
+	"19": "Nuevo León",
+	"12": "Guerrero",
+	"11": "Guanajuato",
+	"25": "Sinaloa",
+	"15": "Ciudad de México",
+	"29": "Tlaxcala",
+	"13": "Hidalgo",
+	"08": "Chihuahua",
+	"24": "San Luis Potosí",
+	"27": "Tabasco",
+	"23": "Quintana Roo",
+	"28": "Tamaulipas",
+	"14": "Jalisco",
+	"05": "Coahuila de Zaragoza",
+	"09": "Ciudad de México",
+	"21": "Puebla",
+	"06": "Colima",
+	"02": "Baja California",
+	"32": "Zacatecas",
+	"01": "Aguascalientes",
+	"22": "Querétaro",
+	"30": "Veracruz de Ignacio de la Llave",
+	"20": "Oaxaca",
+	"17": "Morelos",
+	"18": "Nayarit",
+	"07": "Chiapas",
+}
+
+var COFFEE_SPECIES = map[string]string{
+	"Ar": "Arábiga",
+	"Ro": "Robusta",
+	"Lb": "Libérica",
+	"Ex": "Excelsa",
+}
