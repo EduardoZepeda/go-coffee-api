@@ -65,6 +65,15 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	coffeeShopsApi.HandleFunc("/{id:[0-9]+}", handlers.GetCoffeeShopById(app)).Methods(http.MethodGet)
 	coffeeShopsApi.HandleFunc("/{id:[0-9]+}", handlers.UpdateCoffeeShop(app)).Methods(http.MethodPut)
 	coffeeShopsApi.HandleFunc("/{id:[0-9]+}", handlers.DeleteCoffeeShop(app)).Methods(http.MethodDelete)
+	// Coffee bags endpoints, this routes are protected, and only staff members can use unsafe methods
+	coffeeBagsApi := api.PathPrefix("/coffee-bags").Subrouter()
+	coffeeBagsApi.Use(middleware.IsStaffOrReadOnly(app))
+	coffeeBagsApi.HandleFunc("", handlers.CreateCoffeeBag(app)).Methods(http.MethodPost)
+	coffeeBagsApi.HandleFunc("", handlers.GetCoffeeBags(app)).Methods(http.MethodGet)
+	coffeeBagsApi.HandleFunc("/{id:[0-9]+}", handlers.GetCoffeeBagById(app)).Methods(http.MethodGet)
+	coffeeBagsApi.HandleFunc("/{id:[0-9]+}", handlers.UpdateCoffeeBag(app)).Methods(http.MethodPut)
+	coffeeBagsApi.HandleFunc("/{id:[0-9]+}", handlers.DeleteCoffeeBag(app)).Methods(http.MethodDelete)
+
 	// Feed for user, only authenticated users can access it
 	feedApi := api.PathPrefix("/feed").Subrouter()
 	feedApi.Use(middleware.AuthenticatedOnly(app))
