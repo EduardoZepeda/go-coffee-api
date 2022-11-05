@@ -26,7 +26,7 @@ import (
 // @Param longitude query float32 false "User longitude"
 // @Param latitude query float32 false "User latitude"
 // @Success      200  {array}  models.CoffeeShop
-// @Failure      404  {object}  types.ApiError
+// @Failure      404  {object}  []models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /coffee-shops [get]
 func GetCoffeeShops(app *application.App) http.HandlerFunc {
@@ -100,7 +100,7 @@ func GetCoffeeShops(app *application.App) http.HandlerFunc {
 // @Produce      json
 // @Param coffee_shop_id path string true "Coffee Shop ID"
 // @Success      200  {object}  models.CoffeeShop
-// @Failure      404  {object}  types.ApiError
+// @Failure      404  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /coffee-shops/{coffee_shop_id} [get]
 func GetCoffeeShopById(app *application.App) http.HandlerFunc {
@@ -130,7 +130,7 @@ func GetCoffeeShopById(app *application.App) http.HandlerFunc {
 // @Param Authorization header string true "With the bearer started. Only staff members"
 // @Success      201  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
-// @Failure      404  {object}  types.ApiError
+// @Failure      404  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /coffee-shops [post]
 func CreateCoffeeShop(app *application.App) http.HandlerFunc {
@@ -171,7 +171,7 @@ func CreateCoffeeShop(app *application.App) http.HandlerFunc {
 // @Param coffee_shop_id path string true "Coffee Shop ID"
 // @Success      200  {object}  models.CoffeeShop
 // @Failure      400  {object}  types.ApiError
-// @Failure      404  {object}  types.ApiError
+// @Failure      404  {object}  models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /coffee-shops/{coffee_shop_id} [put]
 func UpdateCoffeeShop(app *application.App) http.HandlerFunc {
