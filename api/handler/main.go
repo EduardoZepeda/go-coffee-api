@@ -65,6 +65,10 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	coffeeShopsApi.HandleFunc("/{id:[0-9]+}", handlers.GetCoffeeShopById(app)).Methods(http.MethodGet)
 	coffeeShopsApi.HandleFunc("/{id:[0-9]+}", handlers.UpdateCoffeeShop(app)).Methods(http.MethodPut)
 	coffeeShopsApi.HandleFunc("/{id:[0-9]+}", handlers.DeleteCoffeeShop(app)).Methods(http.MethodDelete)
+	coffeeShopsApi.HandleFunc("/{id:[0-9]+}/coffee-bags", handlers.GetCoffeeBagByCoffeeShop(app)).Methods(http.MethodGet)
+	coffeeShopsApi.HandleFunc("/{id:[0-9]+}/coffee-bags/{coffee_bag_id:[0-9]+}", handlers.AddCoffeeBagToCoffeeShop(app)).Methods(http.MethodPost)
+	coffeeShopsApi.HandleFunc("/{id:[0-9]+}/coffee-bags/{coffee_bag_id:[0-9]+}", handlers.DeleteCoffeeBagFromCoffeeShop(app)).Methods(http.MethodDelete)
+
 	// Coffee bags endpoints, this routes are protected, and only staff members can use unsafe methods
 	coffeeBagsApi := api.PathPrefix("/coffee-bags").Subrouter()
 	coffeeBagsApi.Use(middleware.IsStaffOrReadOnly(app))

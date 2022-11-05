@@ -489,6 +489,126 @@ paths:
       summary: Update a coffee shop
       tags:
       - coffee shops
+  /coffee-shops/{id}/coffee-bags:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all coffee bags sold by a given coffee shop in Guadalajara.
+        Use page and size GET arguments to regulate the number of objects returned
+        and the page, respectively.
+      parameters:
+      - description: Coffee Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Size number
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CoffeeBag'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/models.EmptyBody'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get a list of coffee bags by coffee shop
+      tags:
+      - coffee bags by coffee shop
+  /coffee-shops/{id}/coffee-bags/{coffee_bag_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a coffee bag from a coffee shop using their ids.
+      parameters:
+      - description: Coffee Bag ID
+        in: path
+        name: coffee_bag_id
+        required: true
+        type: string
+      - description: Coffee Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: With the bearer started. Only staff members
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Remove a coffee bag from a coffee shop
+      tags:
+      - coffee bags by coffee shop
+    post:
+      consumes:
+      - application/json
+      description: Add a new coffee bag to a coffee shop by their ids
+      parameters:
+      - description: Coffee Bag ID
+        in: path
+        name: coffee_bag_id
+        required: true
+        type: string
+      - description: Coffee Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: With the bearer started. Only staff members
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Add a new coffee bag to a coffee shop
+      tags:
+      - coffee bags by coffee shop
   /feed:
     get:
       consumes:

@@ -32,7 +32,10 @@ type Repository interface {
 	GetCoffeeBagById(ctx context.Context, coffeeBagId string) (*models.CoffeeBag, error)
 	CreateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error)
 	UpdateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error)
-	DeleteCoffeeBag(ctx context.Context, coffeeBagId string) error
+	DeleteCoffeeBag(ctx context.Context, coffeeShopId string) error
+	GetCoffeeBagByCoffeeShop(ctx context.Context, coffeeShopId *models.CoffeeBagByShopId) ([]*models.CoffeeBag, error)
+	AddCoffeeBagToCoffeeShop(ctx context.Context, coffeeBagId string, coffeeShopId string) error
+	RemoveCoffeeBagFromCoffeeShop(ctx context.Context, coffeeBagId string, coffeeShopId string) error
 	Close() error
 }
 
@@ -140,6 +143,18 @@ func UpdateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.
 
 func DeleteCoffeeBag(ctx context.Context, coffeeBagId string) error {
 	return implementation.DeleteCoffeeBag(ctx, coffeeBagId)
+}
+
+func GetCoffeeBagByCoffeeShop(ctx context.Context, coffeeShopId *models.CoffeeBagByShopId) ([]*models.CoffeeBag, error) {
+	return implementation.GetCoffeeBagByCoffeeShop(ctx, coffeeShopId)
+}
+
+func AddCoffeeBagToCoffeeShop(ctx context.Context, coffeeBagId string, coffeeShopId string) error {
+	return implementation.AddCoffeeBagToCoffeeShop(ctx, coffeeBagId, coffeeShopId)
+}
+
+func RemoveCoffeeBagFromCoffeeShop(ctx context.Context, coffeeBagId string, coffeeShopId string) error {
+	return implementation.RemoveCoffeeBagFromCoffeeShop(ctx, coffeeBagId, coffeeShopId)
 }
 
 func Close() error {

@@ -10,3 +10,8 @@ type CoffeeBag struct {
 type CoffeeBagsList struct {
 	Pagination
 }
+
+type CoffeeBagByShopId struct {
+	CoffeeShopId string
+	Pagination
+}

@@ -568,6 +568,182 @@ const docTemplate = `{
                 }
             }
         },
+        "/coffee-shops/{id}/coffee-bags": {
+            "get": {
+                "description": "Get a list of all coffee bags sold by a given coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags by coffee shop"
+                ],
+                "summary": "Get a list of coffee bags by coffee shop",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coffee Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size number",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CoffeeBag"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmptyBody"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/coffee-shops/{id}/coffee-bags/{coffee_bag_id}": {
+            "post": {
+                "description": "Add a new coffee bag to a coffee shop by their ids",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags by coffee shop"
+                ],
+                "summary": "Add a new coffee bag to a coffee shop",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coffee Bag ID",
+                        "name": "coffee_bag_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Coffee Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove a coffee bag from a coffee shop using their ids.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags by coffee shop"
+                ],
+                "summary": "Remove a coffee bag from a coffee shop",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coffee Bag ID",
+                        "name": "coffee_bag_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Coffee Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
         "/feed": {
             "get": {
                 "description": "This route returns the user's last ten feed items. Each item consists of a subject, an action and a destinatary",

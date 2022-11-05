@@ -223,6 +223,38 @@ func (repo *PostgresRepository) DeleteCoffeeBag(ctx context.Context, coffeeBagId
 	return err
 }
 
+func (repo *PostgresRepository) GetCoffeeBagByCoffeeShop(ctx context.Context, coffeeShopId *models.CoffeeBagByShopId) ([]*models.CoffeeBag, error) {
+	var coffeeBags []*models.CoffeeBag
+	rows, err := repo.db.QueryxContext(ctx, "SELECT shops_coffeebag.id, brand, species, origin FROM shops_coffeebag INNER JOIN shops_coffeebag_coffee_shop ON shops_coffeebag.id = shops_coffeebag_coffee_shop.coffeebag_id WHERE shops_coffeebag_coffee_shop.shop_id = $1 LIMIT $2 OFFSET $3;", coffeeShopId.CoffeeShopId, coffeeShopId.Size, coffeeShopId.Page*coffeeShopId.Size)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var item models.CoffeeBag
+		err = rows.StructScan(&item)
+		item.Species = COFFEE_SPECIES[item.Species]
+		item.Origin = STATE_CHOICES[item.Origin]
+		coffeeBags = append(coffeeBags, &item)
+	}
+	err = rows.Err()
+	return coffeeBags, err
+}
+
+func (repo *PostgresRepository) AddCoffeeBagToCoffeeShop(ctx context.Context, coffeeBagId string, coffeeShopId string) error {
+	_, err := repo.db.ExecContext(ctx, "INSERT INTO shops_coffeebag_coffee_shop (coffeebag_id, shop_id) VALUES($1, $2);", coffeeBagId, coffeeShopId)
+	if err != nil {
+		if strings.Contains(err.Error(), "shops_coffeebag_coffee_shop_coffeebag_id_shop_id_2d92af17_uniq") {
+			return errors.New("That coffee bag is already registered as a product of that coffee shop")
+		}
+	}
+	return err
+}
+
+func (repo *PostgresRepository) RemoveCoffeeBagFromCoffeeShop(ctx context.Context, coffeeBagId string, coffeeShopId string) error {
+	_, err := repo.db.ExecContext(ctx, "DELETE FROM shops_coffeebag_coffee_shop WHERE coffeebag_id = $1 and shop_id = $2;", coffeeBagId, coffeeShopId)
+	return err
+}
+
 func (repo *PostgresRepository) Close() error {
 	return repo.db.Close()
 }
