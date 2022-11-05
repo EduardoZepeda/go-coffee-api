@@ -175,7 +175,7 @@ func UpdateUser(app *application.App) http.HandlerFunc {
 // @Produce      json
 // @Param user_id path string true "User ID"
 // @Success      200  {object}  models.GetUserResponse
-// @Failure      404  {object}  types.ApiError
+// @Failure      404  {object} models.EmptyBody
 // @Failure      500  {object}  types.ApiError
 // @Router       /users/{user_id} [get]
 func GetUser(app *application.App) http.HandlerFunc {
