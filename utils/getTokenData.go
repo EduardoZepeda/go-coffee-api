@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func contains(list []string, item string) bool {
+func Contains(list []string, item string) bool {
 	for _, value := range list {
 		if value == item {
 			return true
@@ -34,7 +34,7 @@ func GetTokenFromAuthHeader(r *http.Request) (string, error) {
 
 func GetDataFromToken(r *http.Request, data string) (interface{}, error) {
 	VALID_TOKEN_KEYS := []string{"userId", "isStaff"}
-	if !contains(VALID_TOKEN_KEYS, data) {
+	if !Contains(VALID_TOKEN_KEYS, data) {
 		return nil, errors.New(fmt.Sprintf("JWT Token doesn't contain the %s claim", data))
 	}
 	tokenString, err := GetTokenFromAuthHeader(r)
