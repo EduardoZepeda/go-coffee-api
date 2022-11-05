@@ -183,6 +183,46 @@ func (repo *PostgresRepository) GetUserFeed(ctx context.Context, id string) ([]*
 	return feed, err
 }
 
+func (repo *PostgresRepository) GetCoffeeBags(ctx context.Context, CoffeeBagsList models.CoffeeBagsList) ([]*models.CoffeeBag, error) {
+	var coffeeBags []*models.CoffeeBag
+	rows, err := repo.db.QueryxContext(ctx, "SELECT id, brand, species, origin FROM shops_coffeebag LIMIT $1 OFFSET $2;", CoffeeBagsList.Size, CoffeeBagsList.Page*CoffeeBagsList.Size)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var item models.CoffeeBag
+		err = rows.StructScan(&item)
+		item.Species = COFFEE_SPECIES[item.Species]
+		item.Origin = STATE_CHOICES[item.Origin]
+		coffeeBags = append(coffeeBags, &item)
+	}
+	err = rows.Err()
+	return coffeeBags, err
+}
+
+func (repo *PostgresRepository) CreateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error) {
+	var coffeBagId string
+	err := repo.db.QueryRowContext(ctx, "INSERT INTO shops_coffeebag (brand, species, origin) VALUES($1, $2, $3) RETURNING id;", coffeeBag.Brand, coffeeBag.Species, coffeeBag.Origin).Scan(&coffeBagId)
+	coffeeBag.ID = coffeBagId
+	return coffeeBag, err
+}
+
+func (repo *PostgresRepository) GetCoffeeBagById(ctx context.Context, coffeeBagId string) (*models.CoffeeBag, error) {
+	var coffeeShopBag models.CoffeeBag
+	err := repo.db.GetContext(ctx, &coffeeShopBag, "SELECT id, brand, species, origin FROM shops_coffeebag WHERE id = $1;", coffeeBagId)
+	return &coffeeShopBag, err
+}
+
+func (repo *PostgresRepository) UpdateCoffeeBag(ctx context.Context, coffeeBag *models.CoffeeBag) (*models.CoffeeBag, error) {
+	_, err := repo.db.NamedExecContext(ctx, "UPDATE shops_coffeebag SET brand = brand, species = species, origin = origin WHERE id = id;", coffeeBag)
+	return coffeeBag, err
+}
+
+func (repo *PostgresRepository) DeleteCoffeeBag(ctx context.Context, coffeeBagId string) error {
+	_, err := repo.db.ExecContext(ctx, "DELETE FROM shops_coffeebag WHERE id = $1;", coffeeBagId)
+	return err
+}
+
 func (repo *PostgresRepository) Close() error {
 	return repo.db.Close()
 }
