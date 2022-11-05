@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  models.CoffeeBag:
+    properties:
+      brand:
+        type: string
+      origin:
+        type: string
+      species:
+        type: string
+    type: object
   models.CoffeeShop:
     properties:
       address:
@@ -102,7 +111,7 @@ definitions:
       message:
         type: string
     type: object
-host: go-coffee-api.vercel.app
+host: localhost:3000
 info:
   contact:
     email: eduardozepeda@coffeebytes.dev
@@ -116,6 +125,182 @@ info:
   title: Coffee Shops in Gdl API
   version: "1.0"
 paths:
+  /coffee-bags:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all coffee bags in Guadalajara. Use page and size
+        GET arguments to regulate the number of objects returned and the page, respectively.
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Size number
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CoffeeBag'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/models.EmptyBody'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get a list of coffee bags
+      tags:
+      - coffee bags
+    post:
+      consumes:
+      - application/json
+      description: Create a coffee bag object.
+      parameters:
+      - description: New Coffee Bag data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CoffeeBag'
+      - description: With the bearer started. Only staff members
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.CoffeeBag'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Create a new coffee bag
+      tags:
+      - coffee bags
+  /coffee-bags/{coffee_bag_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a coffee bag object by its Id.
+      parameters:
+      - description: Coffee Bag ID
+        in: path
+        name: coffee_bag_id
+        required: true
+        type: string
+      - description: With the bearer started. Only staff members
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Delete a coffee bag
+      tags:
+      - coffee bags
+    get:
+      consumes:
+      - application/json
+      description: Get a specific coffee bag object. Id parameter must be an integer.
+      parameters:
+      - description: Coffee Bag ID
+        in: path
+        name: coffee_bag_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CoffeeBag'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Get a coffee bag by its id
+      tags:
+      - coffee bags
+    put:
+      consumes:
+      - application/json
+      description: Update a coffee bag object by its Id.
+      parameters:
+      - description: Updated Coffee Bag data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CoffeeBag'
+      - description: With the bearer started. Only staff members
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Coffee Bag ID
+        in: path
+        name: coffee_bag_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CoffeeBag'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ApiError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.EmptyBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ApiError'
+      summary: Update a coffee bag
+      tags:
+      - coffee bags
   /coffee-shops:
     get:
       consumes:
@@ -155,7 +340,9 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.ApiError'
+            items:
+              $ref: '#/definitions/models.EmptyBody'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -193,7 +380,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.ApiError'
+            $ref: '#/definitions/models.EmptyBody'
         "500":
           description: Internal Server Error
           schema:
@@ -251,7 +438,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.ApiError'
+            $ref: '#/definitions/models.EmptyBody'
         "500":
           description: Internal Server Error
           schema:
@@ -294,7 +481,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.ApiError'
+            $ref: '#/definitions/models.EmptyBody'
         "500":
           description: Internal Server Error
           schema:
@@ -704,7 +891,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.ApiError'
+            $ref: '#/definitions/models.EmptyBody'
         "500":
           description: Internal Server Error
           schema:

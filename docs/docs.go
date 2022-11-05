@@ -24,6 +24,269 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/coffee-bags": {
+            "get": {
+                "description": "Get a list of all coffee bags in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags"
+                ],
+                "summary": "Get a list of coffee bags",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size number",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CoffeeBag"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmptyBody"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a coffee bag object.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags"
+                ],
+                "summary": "Create a new coffee bag",
+                "parameters": [
+                    {
+                        "description": "New Coffee Bag data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CoffeeBag"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.CoffeeBag"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/coffee-bags/{coffee_bag_id}": {
+            "get": {
+                "description": "Get a specific coffee bag object. Id parameter must be an integer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags"
+                ],
+                "summary": "Get a coffee bag by its id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coffee Bag ID",
+                        "name": "coffee_bag_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CoffeeBag"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a coffee bag object by its Id.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags"
+                ],
+                "summary": "Update a coffee bag",
+                "parameters": [
+                    {
+                        "description": "Updated Coffee Bag data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CoffeeBag"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Coffee Bag ID",
+                        "name": "coffee_bag_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CoffeeBag"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a coffee bag object by its Id.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "coffee bags"
+                ],
+                "summary": "Delete a coffee bag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coffee Bag ID",
+                        "name": "coffee_bag_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "With the bearer started. Only staff members",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmptyBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ApiError"
+                        }
+                    }
+                }
+            }
+        },
         "/coffee-shops": {
             "get": {
                 "description": "Get a list of all coffee shop in Guadalajara. Use page and size GET arguments to regulate the number of objects returned and the page, respectively.",
@@ -82,7 +345,10 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.ApiError"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmptyBody"
+                            }
                         }
                     },
                     "500": {
@@ -139,7 +405,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.ApiError"
+                            "$ref": "#/definitions/models.EmptyBody"
                         }
                     },
                     "500": {
@@ -183,7 +449,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.ApiError"
+                            "$ref": "#/definitions/models.EmptyBody"
                         }
                     },
                     "500": {
@@ -247,7 +513,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.ApiError"
+                            "$ref": "#/definitions/models.EmptyBody"
                         }
                     },
                     "500": {
@@ -856,7 +1122,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.ApiError"
+                            "$ref": "#/definitions/models.EmptyBody"
                         }
                     },
                     "500": {
@@ -977,6 +1243,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.CoffeeBag": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "origin": {
+                    "type": "string"
+                },
+                "species": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CoffeeShop": {
             "type": "object",
             "properties": {
@@ -1141,7 +1421,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "go-coffee-api.vercel.app",
+	Host:             "localhost:3000",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Coffee Shops in Gdl API",
