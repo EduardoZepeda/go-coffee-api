@@ -1,9 +1,8 @@
 package models
 
 type LikesByUserRequest struct {
-	Page   uint64
-	Size   uint64
 	UserId string
+	Pagination
 }
 
 type LikeUnlikeCoffeeShopRequest struct {
