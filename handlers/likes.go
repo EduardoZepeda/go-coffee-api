@@ -45,7 +45,7 @@ func GetLikedCoffeeShops(app *application.App) http.HandlerFunc {
 			return
 		}
 		userId := parameters.GetStringParam(r, "user", currentUserId.(string))
-		likesByUser := models.LikesByUserRequest{Size: size, Page: page, UserId: userId}
+		likesByUser := models.LikesByUserRequest{UserId: userId, Pagination: models.Pagination{Page: page, Size: size}}
 		// If there is search term parameter
 		shops, err := app.Repo.GetLikedCoffeeShops(r.Context(), &likesByUser)
 		if err != nil {
