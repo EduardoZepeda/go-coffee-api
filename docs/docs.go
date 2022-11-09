@@ -998,6 +998,23 @@ const docTemplate = `{
                 }
             }
         },
+        "/healthcheck": {
+            "get": {
+                "description": "Returns the api version, the environment and the server status",
+                "tags": [
+                    "healthcheck"
+                ],
+                "summary": "Returns the server status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.HealtcheckResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/likes": {
             "get": {
                 "description": "Return liked coffee shops data by user id",
@@ -1509,6 +1526,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HealtcheckResponse": {
+            "type": "object",
+            "properties": {
+                "environment": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }

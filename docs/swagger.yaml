@@ -61,6 +61,15 @@ definitions:
       username:
         type: string
     type: object
+  models.HealtcheckResponse:
+    properties:
+      environment:
+        type: string
+      status:
+        type: string
+      version:
+        type: string
+    type: object
   models.LikeUnlikeCoffeeShopRequest:
     properties:
       shopId:
@@ -779,6 +788,17 @@ paths:
       summary: Return following users,
       tags:
       - follows
+  /healthcheck:
+    get:
+      description: Returns the api version, the environment and the server status
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HealtcheckResponse'
+      summary: Returns the server status
+      tags:
+      - healthcheck
   /likes:
     get:
       consumes:
