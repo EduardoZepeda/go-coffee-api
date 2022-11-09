@@ -15,3 +15,15 @@ docs/generate:
 run/dev:
 	@echo 'Running server in development mode'
 	vercel dev
+
+## migrate/up: Run the appropiate up migrations and set the database in its final state
+.PHONY: migrate/up
+migrate/up:
+	@echo 'Running migrations'
+	migrate -path=./migrations -database ${GO_COFFEE_API_DSN} up
+
+## migrate/down: Run the appropiate up migrations and set the database in its intial state
+.PHONY: migrate/down
+migrate/down:
+	@echo 'Running migrations'
+	migrate -path=./migrations -database ${GO_COFFEE_API_DSN} down
