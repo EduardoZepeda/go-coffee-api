@@ -9,26 +9,26 @@ import Link from '@mui/material/Link';
 export default function App() {
 
   return (
-    <Box sx={{backgroundColor: 'grey.900', color: 'white', height: '100vh', position: 'relative'}}>
-      <Box sx={{ position: 'absolute', bottom: '24px', left: '24px'}}>
-        <Typography>Made by <Link href="https://eduardozepeda.dev" underline="none">Eduardo Zepeda</Link></Typography>
+    <Box sx={{ backgroundColor: 'grey.900', color: 'white', height: '100vh', position: 'relative' }}>
+      <Box sx={{ position: 'absolute', bottom: '24px', left: '24px' }}>
+        <Typography>Made by <Link href="https://zeedu.dev" underline="none">Eduardo Zepeda</Link></Typography>
       </Box>
-      <Container sx={{ display: 'flex', flexDirection:'column',  justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-      <CssBaseline />
-      <Box sx={{textAlign: 'center'}}>
-      <img srcSet="cup-360w.png 360w,
+      <Container sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <CssBaseline />
+        <Box sx={{ textAlign: 'center' }}>
+          <img srcSet="cup-360w.png 360w,
              cup-180w.png 180w"
-           sizes="(max-width: 480px) 180px,
+            sizes="(max-width: 480px) 180px,
                   360px"
-           src="cup-360w.png" alt="A rainbow cup of coffee" loading="lazy"/>
-        <Typography sx={{textAlign:'center'}} variant="h4" component="h1">Go Coffee API</Typography>
-        <Typography sx={{textAlign:'center'}}>A social network for coffee lovers</Typography>
-      </Box>
-      <Box>
-      <Button href="/api/v1/swagger/" variant="outlined" size="large" sx={{margin: '24px'}}>
-        Go to Coffee API documentation 
-      </Button>
-      </Box>
+            src="cup-360w.png" alt="A rainbow cup of coffee" loading="lazy" />
+          <Typography sx={{ textAlign: 'center' }} variant="h4" component="h1">Go Coffee API</Typography>
+          <Typography sx={{ textAlign: 'center' }}>A social network for coffee lovers</Typography>
+        </Box>
+        <Box>
+          <Button href="/api/v1/swagger/" variant="outlined" size="large" sx={{ margin: '24px' }}>
+            Go to Coffee API documentation
+          </Button>
+        </Box>
       </Container>
     </Box >
   );
