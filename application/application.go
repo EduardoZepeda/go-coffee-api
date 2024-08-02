@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/EduardoZepeda/go-coffee-api/database"
+	"github.com/EduardoZepeda/go-coffee-api/ws"
 	"github.com/gorilla/mux"
 )
 
@@ -13,6 +14,7 @@ type App struct {
 	Repo   *database.PostgresRepository
 	Router *mux.Router
 	Logger *log.Logger
+	Hub    *ws.Hub
 }
 
 func (app *App) Respond(w http.ResponseWriter, data interface{}, statusCode int) error {
@@ -62,6 +64,8 @@ func (app *App) Initialize() error {
 		app.Logger.Fatal(err)
 		return err
 	}
+	app.Hub = ws.NewHub()
+	go app.Hub.Run()
 	app.Logger.Println("App Initialized")
 	return nil
 }

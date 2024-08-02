@@ -16,6 +16,11 @@ run/dev:
 	@echo 'Running server in development mode'
 	vercel dev
 
+## migrate/new name=$1: create a new database migration
+.PHONY: migrate/new
+migrate/new:
+	migrate create -seq -ext=.sql -dir=./migrations ${name}
+
 ## migrate/up: Run the appropiate up migrations and set the database in its final state
 .PHONY: migrate/up
 migrate/up:

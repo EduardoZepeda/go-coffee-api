@@ -39,6 +39,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.Use(middleware.RecoverFromPanic(app), middleware.CorsAllowAll(app), middleware.RateLimit(app))
+	api.PathPrefix("/ws").Handler(handlers.HandleWebSockets(app))
 	api.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	api.PathPrefix("/healthcheck").Handler(handlers.Healtcheck(app)).Methods(http.MethodGet)
 	loginRegisterApi := api.PathPrefix("/").Subrouter()
