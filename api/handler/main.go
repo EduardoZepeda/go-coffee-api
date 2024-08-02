@@ -7,12 +7,13 @@ import (
 	// Remember to place docs outside of api/handler when deploying in vercel
 	// to prevent "Error: Could not find an exported function" error
 
+	"github.com/EduardoZepeda/go-coffee-api/modifiedswaggo"
+
 	"github.com/EduardoZepeda/go-coffee-api/application"
 	_ "github.com/EduardoZepeda/go-coffee-api/docs"
 	"github.com/EduardoZepeda/go-coffee-api/handlers"
 	"github.com/EduardoZepeda/go-coffee-api/middleware"
 	"github.com/gorilla/mux"
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 var app *application.App
@@ -40,7 +41,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.Use(middleware.RecoverFromPanic(app), middleware.CorsAllowAll(app), middleware.RateLimit(app))
 	api.PathPrefix("/ws").Handler(handlers.HandleWebSockets(app))
-	api.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
+	api.PathPrefix("/swagger").Handler(modifiedHttpSwaggo.WrapHandler)
 	api.PathPrefix("/healthcheck").Handler(handlers.Healtcheck(app)).Methods(http.MethodGet)
 	loginRegisterApi := api.PathPrefix("/").Subrouter()
 	loginRegisterApi.Use(middleware.AuthenticatedOrReadOnly(app))
