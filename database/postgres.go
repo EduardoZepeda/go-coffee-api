@@ -37,7 +37,7 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 	u := GenerateConnectionString()
 	db, err := sqlx.Connect("postgres", u.String())
 	if err != nil {
-		log.Println(u.String(), err)
+		log.Println(err)
 		return nil, err
 	}
 	db.SetMaxOpenConns(25)                 // The default is 0 (unlimited)
