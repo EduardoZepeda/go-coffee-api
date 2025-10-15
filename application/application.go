@@ -52,7 +52,8 @@ func (app *App) SetRouter(router *mux.Router) error {
 func (app *App) CheckEnv() error {
 	var env = []string{"DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PATH"}
 	for _, value := range env {
-		if os.Getenv(value) == "" {
+		_, ok := os.LookupEnv(value)
+		if !ok {
 			return fmt.Errorf("%s environmental variable is not set", value)
 		}
 	}
