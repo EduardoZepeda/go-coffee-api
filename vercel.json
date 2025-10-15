@@ -4,5 +4,10 @@
             "source": "/api/(.*)",
             "destination": "/api/handler/main.go"
         }
-    ]
+    ],
+    "build": {
+        "env": {
+            "DB_USER": "user"
+        }
+    }
 }
