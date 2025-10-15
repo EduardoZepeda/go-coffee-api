@@ -22,6 +22,7 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 	q.Set("sslmode", "require")
 	q.Set("timezone", "utc")
 	u := url.URL{
+		// Remember to update environmental variables at vercel
 		Scheme:   "postgres",
 		User:     url.UserPassword(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD")),
 		Host:     os.Getenv("DB_HOST"),
