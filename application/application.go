@@ -50,7 +50,7 @@ func (app *App) SetRouter(router *mux.Router) error {
 }
 
 func (app *App) CheckEnv() error {
-	var env = []string{"REACT_APP_DB_USER", "DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PATH"}
+	var env = []string{"DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PATH"}
 	for _, value := range env {
 		if os.Getenv(value) == "" {
 			return fmt.Errorf("%s environmental variable is not set", value)
