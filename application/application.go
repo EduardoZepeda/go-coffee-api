@@ -2,8 +2,10 @@ package application
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/EduardoZepeda/go-coffee-api/database"
 	"github.com/EduardoZepeda/go-coffee-api/ws"
@@ -47,6 +49,16 @@ func (app *App) SetRouter(router *mux.Router) error {
 	return nil
 }
 
+func (app *App) CheckEnv() error {
+	var env = []string{"DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PATH"}
+	for _, value := range env {
+		if os.Getenv(value) == "" {
+			return fmt.Errorf("%s environmental variable is not set", value)
+		}
+	}
+	return nil
+}
+
 func (app *App) SetLogger() error {
 	// Default logger for now
 	app.Logger = log.Default()
@@ -58,6 +70,11 @@ func (app *App) SetLogger() error {
 func (app *App) Initialize() error {
 	err := app.SetLogger()
 	if err != nil {
+		return err
+	}
+	err = app.CheckEnv()
+	if err != nil {
+		app.Logger.Fatal(err)
 		return err
 	}
 	err = app.SetPostgresRepository()
