@@ -34,7 +34,8 @@ func (app *App) Respond(w http.ResponseWriter, data interface{}, statusCode int)
 func (app *App) SetPostgresRepository() error {
 	repo, err := database.NewPostgresRepository()
 	if err != nil {
-		log.Fatal(err)
+		u := database.GenerateConnectionString()
+		log.Fatal(u.String(), err)
 	}
 	app.Logger.Println("Initialized database")
 	app.Repo = repo

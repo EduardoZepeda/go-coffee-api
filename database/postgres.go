@@ -18,7 +18,7 @@ type PostgresRepository struct {
 	db *sqlx.DB
 }
 
-func NewPostgresRepository() (*PostgresRepository, error) {
+func GenerateConnectionString() url.URL {
 	q := make(url.Values)
 	q.Set("sslmode", "require")
 	q.Set("timezone", "utc")
@@ -30,9 +30,14 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 		Path:     os.Getenv("DB_PATH"),
 		RawQuery: q.Encode(),
 	}
+	return u
+}
+
+func NewPostgresRepository() (*PostgresRepository, error) {
+	u := GenerateConnectionString()
 	db, err := sqlx.Connect("postgres", u.String())
 	if err != nil {
-		log.Println(err)
+		log.Println(u.String(), err)
 		return nil, err
 	}
 	db.SetMaxOpenConns(25)                 // The default is 0 (unlimited)
