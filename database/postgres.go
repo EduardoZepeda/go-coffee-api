@@ -39,7 +39,7 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 	db.SetMaxIdleConns(25)                 // defaultMaxIdleConns = 2
 	db.SetConnMaxLifetime(1 * time.Minute) // 0, connections are reused forever.
 	// Return an error if opening the database takes longer than 5 seconds
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	err = db.PingContext(ctx)
