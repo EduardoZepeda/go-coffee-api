@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -29,9 +30,9 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 		Path:     os.Getenv("DB_PATH"),
 		RawQuery: q.Encode(),
 	}
-
 	db, err := sqlx.Connect("postgres", u.String())
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	db.SetMaxOpenConns(25)                 // The default is 0 (unlimited)
@@ -43,6 +44,7 @@ func NewPostgresRepository() (*PostgresRepository, error) {
 
 	err = db.PingContext(ctx)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	return &PostgresRepository{db}, nil

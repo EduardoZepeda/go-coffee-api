@@ -15,6 +15,6 @@ var upgrader = websocket.Upgrader{
 }
 
 func HandleWebSockets(app *application.App) http.HandlerFunc {
-	app.Logger.Println("Conectado")
+	app.Logger.Println("Connected")
 	return app.Hub.HandleWebSocket
 }
