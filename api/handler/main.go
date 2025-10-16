@@ -18,10 +18,7 @@ var app *application.App
 var err error
 
 func init() {
-	app, err = application.New()
-	if err != nil {
-		log.Fatal("Server couldn't start")
-	}
+
 }
 
 // @title Coffee Shops in Gdl API
@@ -35,6 +32,10 @@ func init() {
 // @host go-coffee-api.vercel.app
 // @BasePath /api/v1
 func Api(w http.ResponseWriter, r *http.Request) {
+	app, err = application.New()
+	if err != nil {
+		log.Fatal("Server couldn't start")
+	}
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
 	api.Use(middleware.RecoverFromPanic(app), middleware.CorsAllowAll(app), middleware.RateLimit(app))
