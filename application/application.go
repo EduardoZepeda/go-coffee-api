@@ -73,11 +73,11 @@ func (app *App) Initialize() error {
 	if err != nil {
 		return err
 	}
-	// err = app.CheckEnv()
-	// if err != nil {
-	// 	app.Logger.Fatal(err)
-	// 	return err
-	// }
+	err = app.CheckEnv()
+	if err != nil {
+		app.Logger.Fatal(err)
+		return err
+	}
 	// err = app.SetPostgresRepository()
 	// if err != nil {
 	// 	app.Logger.Fatal(err)
