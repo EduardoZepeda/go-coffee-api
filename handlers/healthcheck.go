@@ -19,7 +19,7 @@ func Healtcheck(app *application.App) http.HandlerFunc {
 		response := &models.HealtcheckResponse{
 			Version:     "1.0",
 			Status:      "up",
-			Environment: os.Getenv("MODE"),
+			Environment: os.Getenv("DB_USER"),
 		}
 		app.Respond(w, response, http.StatusOK)
 	}
