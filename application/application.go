@@ -78,11 +78,11 @@ func (app *App) Initialize() error {
 		app.Logger.Fatal(err)
 		return err
 	}
-	// err = app.SetPostgresRepository()
-	// if err != nil {
-	// 	app.Logger.Fatal(err)
-	// 	return err
-	// }
+	err = app.SetPostgresRepository()
+	if err != nil {
+		app.Logger.Fatal(err)
+		return err
+	}
 	app.Hub = ws.NewHub()
 	go app.Hub.Run()
 	app.Logger.Println("App Initialized")
