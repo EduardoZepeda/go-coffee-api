@@ -18,10 +18,6 @@ import (
 var app *application.App
 var err error
 
-func init() {
-
-}
-
 // @title Coffee Shops in Gdl API
 // @version 1.0
 // @description This API returns information about speciality coffee shops in Guadalajara, Mexico.
